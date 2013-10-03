@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dk.statsbiblioteket.newspaper</groupId>
+    <artifactId>newspaper-parent</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>dk.statsbiblioteket.newspaper</groupId>
+  <artifactId>newspaper-prompt-doms-ingester</artifactId>
+  <version>0.1-SNAPSHOT</version>
+
+  <repositories>
+    <repository>
+      <id>sbforge-nexus</id>
+      <url>https://sbforge.org/nexus/content/groups/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <scm>
+    <url>https://github.com/statsbiblioteket/newspaper-mfpak-integration</url>
+    <connection>scm:https://github.com/statsbiblioteket/newspaper-mfpak-integration.git</connection>
+    <developerConnection>scm:git@github.com:statsbiblioteket/newspaper-mfpak-integration.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>dk.statsbiblioteket.doms.central</groupId>
+            <artifactId>centralWebservice-lib</artifactId>
+            <version>0.0.28-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.statsbiblioteket.newspaper</groupId>
+            <artifactId>tree-processor</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.8</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>
