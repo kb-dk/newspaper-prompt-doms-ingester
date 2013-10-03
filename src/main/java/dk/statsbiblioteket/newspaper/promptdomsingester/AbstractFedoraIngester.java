@@ -3,6 +3,7 @@ package dk.statsbiblioteket.newspaper.promptdomsingester;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.iterator.AbstractIterator;
 import dk.statsbiblioteket.doms.iterator.filesystem.IteratorForFileSystems;
+import dk.statsbiblioteket.doms.iterator.filesystem.TransformingIteratorForFileSystems;
 
 import java.io.File;
 
@@ -17,8 +18,12 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
 
     @Override
     public String ingest(File rootDir) {
-        AbstractIterator<File> iterator = new IteratorForFileSystems(rootDir);
+        AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", ".*\\.jp2");
+        while (iterator.hasNext()) {
+
+        }
         throw new RuntimeException("not implemented");
+
     }
 
 }
