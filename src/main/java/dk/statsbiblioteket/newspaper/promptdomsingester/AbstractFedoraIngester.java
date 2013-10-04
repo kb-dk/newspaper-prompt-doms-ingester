@@ -44,6 +44,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<String>();
         AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", ".*\\.jp2");
+        String rootPid = null;
         while (iterator.hasNext()) {
             Event event = iterator.next();
             switch (event.getType()) {
@@ -55,6 +56,9 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                     oldIds.add(id);
                     String pid = fedora.newEmptyObject(oldIds, getCollections(), "Created object representing " + path);
                     String parentPid = pidStack.peekFirst();
+                    if (rootPid == null) {
+                        rootPid = pid;
+                    }
                     pidStack.addFirst(pid);
                     if (parentPid != null) {
                         fedora.addRelation(parentPid, null, hasPartRelation, pid, false, parentPid + " hasPart " + pid);
@@ -67,8 +71,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                     break;
             }
         }
-        throw new RuntimeException("not implemented");
-
+        return rootPid;
     }
 
 }

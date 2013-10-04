@@ -27,6 +27,7 @@ public abstract class SimpleFedoraIngesterTest {
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testRoot = new File(rootTestdataDir, "small-test-batch_contents-included/B400022028241-RT1");
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
-        ingester.ingest(testRoot);
+        String rootPid = ingester.ingest(testRoot);
+        System.out.println("Created object tree rooted at " + rootPid);
     }
 }
