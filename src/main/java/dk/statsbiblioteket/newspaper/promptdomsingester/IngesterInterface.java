@@ -1,6 +1,11 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester;
 
 
+import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
+import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
+import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
+import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
+
 import java.io.File;
 import java.security.MessageDigest;
 
@@ -15,7 +20,7 @@ public interface IngesterInterface {
      * @param rootDir
      * @return the DOMS pid of the root object.
      */
-    String ingest(File rootDir);
+    String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException;
 
     boolean isMetadataFile(File file);
 

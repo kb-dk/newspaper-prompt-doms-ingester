@@ -4,6 +4,9 @@ import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 
 import java.io.File;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An implementation of AbstractFedoraIngester where the types of file (data/metadata/checksum) can
@@ -17,12 +20,14 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
     private String[] metadataFileSuffixes;
     private String[] dataFileSuffixes;
     private String[] checksumFileSuffixes;
+    private String[] collections;
 
-    public SimpleFedoraIngester(EnhancedFedora fedora, String[] checksumFileSuffixes, String[] dataFileSuffixes, String[] metadataFileSuffixes) {
+    public SimpleFedoraIngester(EnhancedFedora fedora, String[] checksumFileSuffixes, String[] dataFileSuffixes, String[] metadataFileSuffixes, String[] collections) {
         this.fedora = fedora;
         this.checksumFileSuffixes = checksumFileSuffixes;
         this.dataFileSuffixes = dataFileSuffixes;
         this.metadataFileSuffixes = metadataFileSuffixes;
+        this.collections = collections;
     }
 
     @Override
@@ -31,21 +36,41 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
     }
 
     @Override
+    public List<String> getCollections() {
+        if (collections == null) {
+            collections = new String[]{};
+        }
+        return new ArrayList<String>(Arrays.asList(collections));
+    }
+
+    @Override
     public boolean isMetadataFile(File file) {
-        //Check if it has a metadata suffix
-        throw new RuntimeException("not implemented");
+        for (String suffix: metadataFileSuffixes) {
+            if (file.getName().endsWith(suffix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean isDataFile(File file) {
-        //Check if it has a data suffix
-        throw new RuntimeException("not implemented");
+        for (String suffix: dataFileSuffixes) {
+            if (file.getName().endsWith(suffix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean isChecksumFile(File file) {
-        //Check if it has a checksum file
-        throw new RuntimeException("not implemented");
+        for (String suffix: checksumFileSuffixes) {
+            if (file.getName().endsWith(suffix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
