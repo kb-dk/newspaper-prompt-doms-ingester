@@ -1,27 +1,21 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester;
 
+import com.google.common.io.CharStreams;
 import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
 import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
-import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.iterator.AbstractIterator;
 import dk.statsbiblioteket.doms.iterator.common.AttributeParsingEvent;
 import dk.statsbiblioteket.doms.iterator.common.ParsingEvent;
-import dk.statsbiblioteket.doms.iterator.filesystem.IteratorForFileSystems;
 import dk.statsbiblioteket.doms.iterator.filesystem.transforming.TransformingIteratorForFileSystems;
-import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
+import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -100,16 +94,16 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                         }
                         String datastreamName = splitName[splitName.length - 2];
                         log.debug("Ingesting datastream '" + datastreamName + "'");
-                        StringWriter writer = new StringWriter();
+                        String metadataText = null;
                         try {
-                            IOUtils.copy(attributeParsingEvent.getText(), writer, "UTF-8");
+                            metadataText = CharStreams.toString(new InputStreamReader(attributeParsingEvent.getText(), "UTF-8"));
                         } catch (IOException e) {
                             throw new DomsIngesterException(e);
                         }
-                        String metadataText = writer.toString();
                         String checksum = null;
                         try {
                             checksum = attributeParsingEvent.getChecksum();
+                            checksum = checksum.toLowerCase();
                         } catch (IOException e) {
                             throw new DomsIngesterException(e);
                         }
