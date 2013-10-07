@@ -22,7 +22,7 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
     private String[] checksumFileSuffixes;
     private String[] collections;
 
-    public SimpleFedoraIngester(EnhancedFedora fedora, String[] checksumFileSuffixes, String[] dataFileSuffixes, String[] metadataFileSuffixes, String[] collections) {
+    public SimpleFedoraIngester(EnhancedFedora fedora, String[] dataFileSuffixes, String[] collections) {
         this.fedora = fedora;
         this.checksumFileSuffixes = checksumFileSuffixes;
         this.dataFileSuffixes = dataFileSuffixes;
@@ -43,40 +43,16 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
         return new ArrayList<String>(Arrays.asList(collections));
     }
 
-    @Override
-    public boolean isMetadataFile(File file) {
-        for (String suffix: metadataFileSuffixes) {
-            if (file.getName().endsWith(suffix)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     @Override
-    public boolean isDataFile(File file) {
+    public boolean isDataFile(String localname) {
         for (String suffix: dataFileSuffixes) {
-            if (file.getName().endsWith(suffix)) {
+            if (localname.endsWith(suffix)) {
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public boolean isChecksumFile(File file) {
-        for (String suffix: checksumFileSuffixes) {
-            if (file.getName().endsWith(suffix)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public MessageDigest getKnownChecksum(File file) {
-        //TODO: Check through all the checksum files to see if there is one with the checksum for
-        //this file.
-        return null;
-    }
 }

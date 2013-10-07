@@ -20,14 +20,16 @@ import static org.testng.Assert.assertTrue;
 public abstract class SimpleFedoraIngesterTest {
 
     abstract EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException;
+    String pid;
 
     @Test
     public void testIngest() throws Exception {
-        SimpleFedoraIngester ingester = new SimpleFedoraIngester(getEnhancedFedora(), new String[]{".md5"}, new String[]{".xml"}, new String[]{".jp2"}, new String[]{"info:Batch"});
+        SimpleFedoraIngester ingester = new SimpleFedoraIngester(getEnhancedFedora(), new String[]{".jp2"}, new String[]{"info:Batch"});
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testRoot = new File(rootTestdataDir, "small-test-batch_contents-included/B400022028241-RT1");
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
         String rootPid = ingester.ingest(testRoot);
+        pid = rootPid;
         System.out.println("Created object tree rooted at " + rootPid);
     }
 }

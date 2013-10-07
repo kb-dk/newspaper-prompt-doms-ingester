@@ -8,6 +8,8 @@ import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,19 +18,28 @@ import java.net.MalformedURLException;
  * Time: 2:10 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTest {
+public class SimpleFedoraIngesterTestUnit extends SimpleFedoraIngesterTest {
+
+    TestEnhancedFedoraImpl fedora = null;
 
     @Override
     EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException {
-        Credentials creds = new Credentials("fedoraAdmin", "fedoraAdminPass");
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, "http://achernar:7880/fedora", "http://achernar:7880/pidgenerator-service" , null);
-        return eFedora;
+        List<String> datastreamNames = new ArrayList<>();
+        datastreamNames.add("mods");
+        datastreamNames.add("film");
+        datastreamNames.add("edition");
+        datastreamNames.add("alto");
+        datastreamNames.add("mix");
+        this.fedora = new TestEnhancedFedoraImpl(datastreamNames);
+        return fedora;
     }
 
-    @Test(groups = "integrationTest")
+    @Test
     @Override
     public void testIngest() throws Exception {
         super.testIngest();
-        String pid = super.pid;
+        System.out.println("Created " + fedora.objectsCreated + " objects.");
+        System.out.println("Modified " + fedora.datastreamsModified + " datastreams.");
+        System.out.println(fedora.toString());
     }
 }

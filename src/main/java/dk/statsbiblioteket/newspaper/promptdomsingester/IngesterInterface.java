@@ -20,13 +20,13 @@ public interface IngesterInterface {
      * @param rootDir
      * @return the DOMS pid of the root object.
      */
-    String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException;
+    String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException, DomsIngesterException;
 
-    boolean isMetadataFile(File file);
+    //boolean isMetadataFile(File file);
 
-    boolean isDataFile(File file);
+    boolean isDataFile(String localname);
 
-    boolean isChecksumFile(File file);
+    //boolean isChecksumFile(File file);
 
     /**
      * If a file has an associated checksum then return it in the form of a MessageDigest. Otherwise
@@ -34,6 +34,6 @@ public interface IngesterInterface {
      * @param file The file for which the checksum is required
      * @return the checksum, or null if no checksum is known.
      */
-    MessageDigest getKnownChecksum(File file);
+    //MessageDigest getKnownChecksum(File file);
 
 }
