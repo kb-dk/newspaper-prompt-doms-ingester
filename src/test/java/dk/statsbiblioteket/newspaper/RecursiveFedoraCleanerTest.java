@@ -27,7 +27,7 @@ public class RecursiveFedoraCleanerTest {
         RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
 
-    @Test
+
     public void testCleanFedoraWildcard() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         EnhancedFedora fedora = (new SimpleFedoraIngesterTestIntegration()).getEnhancedFedora();
         String foundPid = new SimpleFedoraIngesterTestIntegration().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
