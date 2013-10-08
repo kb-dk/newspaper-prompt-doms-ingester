@@ -9,7 +9,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Properties;
 
 /**
  *
@@ -32,9 +34,17 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
     }
 
     @Override
-    public EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException {
-        Credentials creds = new Credentials("fedoraAdmin", "fedoraAdminPass");
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, "http://achernar:7880/fedora", "http://achernar:7880/pidgenerator-service" , null);
+    public EnhancedFedora getEnhancedFedora() throws JAXBException, PIDGeneratorException, MalformedURLException {
+        Properties props = new Properties();
+        try {
+            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("ITtest.properties"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        Credentials creds = new Credentials(props.getProperty("fedora.password"), props.getProperty("fedora.location"));
+        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, props.getProperty("fedora.location"), props.getProperty("pidgenerator.location") , null);
         return eFedora;
     }
 
