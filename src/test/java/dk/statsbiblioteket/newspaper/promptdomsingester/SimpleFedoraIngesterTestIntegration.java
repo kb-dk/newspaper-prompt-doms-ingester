@@ -43,7 +43,7 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Credentials creds = new Credentials(props.getProperty("fedora.password"), props.getProperty("fedora.location"));
+        Credentials creds = new Credentials(props.getProperty("fedora.username"), props.getProperty("fedora.password"));
         EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, props.getProperty("fedora.location"), props.getProperty("pidgenerator.location") , null);
         return eFedora;
     }
