@@ -46,7 +46,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
     public String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException, DomsIngesterException {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<String>();
-        Deque<String> labelStack = new ArrayDeque<String>();
+        Deque<String> pathElementStack = new ArrayDeque<String>();
         AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", ".*\\.jp2", ".md5");
         String rootPid = null;
         while (iterator.hasNext()) {
@@ -54,18 +54,18 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             switch (event.getType()) {
                 case NodeBegin :
                     String dir = event.getLocalname();
-                    labelStack.addFirst(dir);
-                    String id = "path:" + getPath(labelStack);
+                    pathElementStack.addFirst(dir);
+                    String id = "path:" + getPath(pathElementStack);
                     ArrayList<String> oldIds = new ArrayList<String>();
                     oldIds.add(id);
                     String logMessage = "Created object with DC id " + id;
                     String currentNodePid = fedora.newEmptyObject(oldIds, getCollections(), logMessage);
                     log.debug(logMessage + " / " + currentNodePid);
-                    String parentPid = pidStack.peekFirst();
                     if (rootPid == null) {
                         rootPid = currentNodePid;
                     }
                     pidStack.addFirst(currentNodePid);
+                    String parentPid = pidStack.peekFirst();
                     if (parentPid != null) {
                         String comment = "Added relationship " + parentPid + " hasPart " + currentNodePid;
                         fedora.addRelation(parentPid, null, hasPartRelation, currentNodePid, false, comment);
@@ -79,14 +79,14 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                     break;
                 case NodeEnd:
                     pidStack.removeFirst();
-                    labelStack.removeFirst();
+                    pathElementStack.removeFirst();
                     break;
                 case Attribute:
                     AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
                     if (event.getLocalname().equals("contents")) {
                         log.debug("Skipping contents attribute.");
                     } else {
-                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + getPath(labelStack) + " == " + labelStack.peekFirst();
+                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + getPath(pathElementStack) + " == " + pathElementStack.peekFirst();
                         log.debug(comment);
                         String[] splitName = attributeParsingEvent.getLocalname().split("\\.");
                         if (splitName.length < 2) {
@@ -102,8 +102,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                         }
                         String checksum = null;
                         try {
-                            checksum = attributeParsingEvent.getChecksum();
-                            checksum = checksum.toLowerCase();
+                            checksum = attributeParsingEvent.getChecksum().toLowerCase();
                         } catch (IOException e) {
                             throw new DomsIngesterException(e);
                         }
