@@ -19,7 +19,7 @@ import java.net.MalformedURLException;
 public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTest {
 
     @Override
-    EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException {
+    public EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException {
         Credentials creds = new Credentials("fedoraAdmin", "fedoraAdminPass");
         EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, "http://achernar:7880/fedora", "http://achernar:7880/pidgenerator-service" , null);
         return eFedora;

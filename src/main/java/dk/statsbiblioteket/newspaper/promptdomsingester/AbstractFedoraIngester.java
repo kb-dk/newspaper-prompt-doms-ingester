@@ -51,11 +51,12 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
+            String directoryPath = getPath(pathElementStack);
             switch (event.getType()) {
                 case NodeBegin :
                     String dir = event.getLocalname();
                     pathElementStack.addFirst(dir);
-                    String id = "path:" + getPath(pathElementStack);
+                    String id = "path:" + directoryPath;
                     ArrayList<String> oldIds = new ArrayList<String>();
                     oldIds.add(id);
                     String logMessage = "Created object with DC id " + id;
@@ -86,7 +87,9 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                     if (event.getLocalname().equals("contents")) {
                         log.debug("Skipping contents attribute.");
                     } else {
-                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + getPath(pathElementStack) + " == " + pathElementStack.peekFirst();
+                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath + " == " + pathElementStack.peekFirst();
+                        String filePath = directoryPath + "/" + event.getLocalname();
+                        log.warn("Cannot add additional id '" + filePath + "' to datastream. No suitable API method.");
                         log.debug(comment);
                         String[] splitName = attributeParsingEvent.getLocalname().split("\\.");
                         if (splitName.length < 2) {
