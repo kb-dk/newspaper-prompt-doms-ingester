@@ -37,7 +37,7 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
     public EnhancedFedora getEnhancedFedora() throws JAXBException, PIDGeneratorException, MalformedURLException {
         Properties props = new Properties();
         try {
-            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("ITtest.properties"));
+            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("integration.test.newspaper.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
