@@ -2,6 +2,7 @@ package dk.statsbiblioteket.newspaper.promptdomsingester;
 
 import dk.statsbiblioteket.doms.central.connectors.*;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
+import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelation;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
 import org.testng.annotations.AfterMethod;
@@ -13,12 +14,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  *
  */
 public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTest {
+    String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
+
 
     @BeforeMethod
     public void setup() throws MalformedURLException, JAXBException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException, PIDGeneratorException {
@@ -54,6 +62,14 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
     public void testIngest() throws Exception {
         super.testIngest();
         String pid = super.pid;
-        //Now do some clever testing here. e.g. tree-parse doms and see if we get the same structure back.
+        String foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1").get(0);
+        assertEquals(pid, foundPid);
+        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-14").get(0);
+        List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(pid, hasPartRelation, new Date().getTime());
+        assertEquals(2, relations.size());
+        //assert that B400022028241-RT1/400022028241-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B exists and has an "alto" datastream
+        foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B").get(0);
+        String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "alto", new Date().getTime());
+        assertTrue(altoStream.length() > 100);
     }
 }

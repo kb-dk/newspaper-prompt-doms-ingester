@@ -26,4 +26,16 @@ public class RecursiveFedoraCleanerTest {
         String label = "path:B400022028241-RT1";
         RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
+
+    @Test
+    public void testCleanFedoraWildcard() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        EnhancedFedora fedora = (new SimpleFedoraIngesterTestIntegration()).getEnhancedFedora();
+        String foundPid = new SimpleFedoraIngesterTestIntegration().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
+        while (foundPid != null) {
+            System.out.println("Deleting object " + foundPid);
+            RecursiveFedoraCleaner.deleteSingleObject(fedora, foundPid);
+            foundPid = new SimpleFedoraIngesterTestIntegration().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
+        }
+    }
+
 }

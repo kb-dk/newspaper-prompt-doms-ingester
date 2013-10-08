@@ -66,7 +66,7 @@ public class RecursiveFedoraCleaner {
         }
     }
 
-    private static void deleteSingleObject(EnhancedFedora fedora, String pid) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public static void deleteSingleObject(EnhancedFedora fedora, String pid) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         fedora.deleteObject(pid, "Deleted in integration test");
     }
 
