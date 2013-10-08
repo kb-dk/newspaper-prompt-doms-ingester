@@ -9,6 +9,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
@@ -37,12 +39,10 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
     public EnhancedFedora getEnhancedFedora() throws JAXBException, PIDGeneratorException, MalformedURLException {
         Properties props = new Properties();
         try {
-            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("integration.test.newspaper.properties"));
+            props.load(new FileReader(new File(System.getProperty("integration.test.newspaper.properties"))));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
         Credentials creds = new Credentials(props.getProperty("fedora.password"), props.getProperty("fedora.location"));
         EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, props.getProperty("fedora.location"), props.getProperty("pidgenerator.location") , null);
         return eFedora;
