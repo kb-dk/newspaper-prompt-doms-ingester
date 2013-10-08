@@ -31,7 +31,7 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
     }
 
     public void cleanupFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        String label = "dir:B400022028241-RT1";
+        String label = "path:B400022028241-RT1";
         RecursiveFedoraCleaner.cleanFedora(getEnhancedFedora(), label, true);
     }
 
@@ -44,7 +44,8 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
             throw new RuntimeException(e);
         }
         Credentials creds = new Credentials(props.getProperty("fedora.admin.username"), props.getProperty("fedora.admin.password"));
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, props.getProperty("fedora.server"), props.getProperty("pidgenerator.location") , null);
+        String fedoraLocation = props.getProperty("doms.server");
+        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, fedoraLocation, props.getProperty("pidgenerator.location") , null);
         return eFedora;
     }
 
