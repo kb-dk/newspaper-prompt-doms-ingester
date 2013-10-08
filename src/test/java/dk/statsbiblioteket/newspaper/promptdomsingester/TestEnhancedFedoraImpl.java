@@ -74,27 +74,28 @@ public class TestEnhancedFedoraImpl implements EnhancedFedora {
     }
 
     @Override
-    public void modifyDatastreamByValue(String pid, String datastream, String contents, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        checkDatastreamName(datastream);
-        checkDatastreamContent(contents);
-        pidsAndStreams.get(pid).add(datastream);
+    public void deleteObject(String s, String s1) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public void modifyDatastreamByValue(String s, String s1, String s2, List<String> strings, String s3) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         datastreamsModified++;
     }
 
     @Override
-    public void modifyDatastreamByValue(String pid, String datastream, String contents, String md5sum, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        checkDatastreamName(datastream);
-        checkDatastreamContent(contents);
-        pidsAndStreams.get(pid).add(datastream);
+    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, List<String> strings, String s4) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         datastreamsModified++;
     }
 
     @Override
-    public void modifyDatastreamByValue(String pid, String datastream, String contents, String checksumType, String checksum, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        checkDatastreamName(datastream);
-        checkDatastreamContent(contents);
-        pidsAndStreams.get(pid).add(datastream);
+    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings, String s5) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         datastreamsModified++;
+    }
+
+    @Override
+    public void deleteDatastream(String s, String s1, String s2) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        throw new RuntimeException("not implemented");
     }
 
     private void checkDatastreamName(String name) {
@@ -115,18 +116,18 @@ public class TestEnhancedFedoraImpl implements EnhancedFedora {
     }
 
     @Override
-    public void addExternalDatastream(String pid, String datastream, String filename, String permanentURL, String formatURI, String mimetype, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-       externalDatastreamsAdded++;
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, List<String> strings, String s6) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void addExternalDatastream(String pid, String datastream, String filename, String permanentURL, String formatURI, String mimetype, String checksumType, String checksum, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-       externalDatastreamsAdded++;
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, List<String> strings, String s8) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void addExternalDatastream(String pid, String datastream, String filename, String permanentURL, String formatURI, String mimetype, String md5sum, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        externalDatastreamsAdded++;
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6, List<String> strings, String s7) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        throw new RuntimeException("not implemented");
     }
 
     @Override

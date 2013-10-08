@@ -36,9 +36,13 @@ public class RecursiveFedoraCleaner {
             log.info("Nothing to delete with label " + label);
             return;
         }
-        log.info("About to delete " + pids.size() + " objects trees.");
-        for (String pid: pids) {
-            purgeObject(fedora, pid, doit);
+        log.info("About to delete " + pids.size() + " objects tree.");
+        //The while loop is necessary because the findObjectFromDCIdentifier() has maxResults=1 set.
+        while (!pids.isEmpty()) {
+            for (String pid: pids) {
+                purgeObject(fedora, pid, doit);
+            }
+            pids = fedora.findObjectFromDCIdentifier(label);
         }
     }
 
@@ -46,18 +50,24 @@ public class RecursiveFedoraCleaner {
         List<FedoraRelation> relations = fedora.getNamedRelations(pid, hasPartRelation, new Date().getTime());
         log.info("About to delete object '" + pid + "'");
         if (doit) {
-            deleteSingleObject(fedora, pid);
+            try {
+                deleteSingleObject(fedora, pid);
+            } catch (Exception e) {
+                log.warn("Could not delete " + pid, e);
+            }
         } else {
             log.info("Didn't actually delete object '" + pid + "'");
         }
         for (FedoraRelation relation: relations) {
             String nextPid = relation.getObject();
-            purgeObject(fedora, nextPid, doit);
+            if (!pid.equals(nextPid)) {
+                purgeObject(fedora, nextPid, doit);
+            }
         }
     }
 
-    private static void deleteSingleObject(EnhancedFedora fedora, String pid) {
-        //No-op because there is no API method to do this yet
+    private static void deleteSingleObject(EnhancedFedora fedora, String pid) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        fedora.deleteObject(pid, "Deleted in integration test");
     }
 
 }

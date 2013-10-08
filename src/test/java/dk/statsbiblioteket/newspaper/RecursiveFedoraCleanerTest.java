@@ -23,7 +23,7 @@ public class RecursiveFedoraCleanerTest {
     @Test
     public void testCleanFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         EnhancedFedora fedora = (new SimpleFedoraIngesterTestIntegration()).getEnhancedFedora();
-        String label = "dir:B400022028241-RT1";
-        RecursiveFedoraCleaner.cleanFedora(fedora, label, false);
+        String label = "path:B400022028241-RT1";
+        RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
 }

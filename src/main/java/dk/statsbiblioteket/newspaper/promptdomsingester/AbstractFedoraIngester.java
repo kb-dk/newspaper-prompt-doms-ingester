@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -51,22 +53,21 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
-            String directoryPath = getPath(pathElementStack);
             switch (event.getType()) {
                 case NodeBegin :
                     String dir = event.getLocalname();
                     pathElementStack.addFirst(dir);
-                    String id = "path:" + directoryPath;
+                    String id = "path:" + getPath(pathElementStack);
                     ArrayList<String> oldIds = new ArrayList<String>();
                     oldIds.add(id);
                     String logMessage = "Created object with DC id " + id;
                     String currentNodePid = fedora.newEmptyObject(oldIds, getCollections(), logMessage);
                     log.debug(logMessage + " / " + currentNodePid);
+                    String parentPid = pidStack.peekFirst();
                     if (rootPid == null) {
                         rootPid = currentNodePid;
                     }
                     pidStack.addFirst(currentNodePid);
-                    String parentPid = pidStack.peekFirst();
                     if (parentPid != null) {
                         String comment = "Added relationship " + parentPid + " hasPart " + currentNodePid;
                         fedora.addRelation(parentPid, null, hasPartRelation, currentNodePid, false, comment);
@@ -87,9 +88,11 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                     if (event.getLocalname().equals("contents")) {
                         log.debug("Skipping contents attribute.");
                     } else {
-                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath + " == " + pathElementStack.peekFirst();
+                        String directoryPath = getPath(pathElementStack);
+                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath + " == " + pidStack.peekFirst();
                         String filePath = directoryPath + "/" + event.getLocalname();
-                        log.warn("Cannot add additional id '" + filePath + "' to datastream. No suitable API method.");
+                        List<String> alternativeIdentifiers = new ArrayList<String>();
+                        alternativeIdentifiers.add(filePath);
                         log.debug(comment);
                         String[] splitName = attributeParsingEvent.getLocalname().split("\\.");
                         if (splitName.length < 2) {
@@ -110,9 +113,9 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                             throw new DomsIngesterException(e);
                         }
                         if (checksum != null) {
-                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, checksum, "Added by ingester.");
+                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, checksum, alternativeIdentifiers, "Added by ingester.");
                         } else {
-                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, "Added by ingester.");
+                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, alternativeIdentifiers, "Added by ingester.");
 
                         }
                     }
