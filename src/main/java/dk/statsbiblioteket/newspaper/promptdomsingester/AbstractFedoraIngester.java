@@ -55,7 +55,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                 case NodeBegin :
                     String dir = event.getLocalname();
                     labelStack.addFirst(dir);
-                    String id = "dir:" + getPath(labelStack);
+                    String id = "path:" + getPath(labelStack);
                     ArrayList<String> oldIds = new ArrayList<String>();
                     oldIds.add(id);
                     String logMessage = "Created object with DC id " + id;
