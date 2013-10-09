@@ -36,7 +36,23 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
     String hasFileRelation = "info:fedora/fedora-system:def/relations-external#hasFile";
 
 
+    /**
+     * Get an EnhancedFedora object for the repository in which ingest is required.
+     * @return  the enhanced fedora.
+     */
     public abstract EnhancedFedora getEnhancedFedora();
+
+    /**
+     * Returns a regexp which can identify data files in this collection, e.g. ".*\\.jp2"
+     * @return the regexp as a String
+     */
+    public abstract String getDataFilePattern();
+
+    /**
+     * Returns the postfix for checksum files in this collection. e.g. ".md5"
+     * @return  the checksum postfix.
+     */
+    public abstract String getChecksumPostfix();
 
     /**
      * Returns a list of collections all new objects must belong to. May be empty.
@@ -49,7 +65,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<String>();
         Deque<String> pathElementStack = new ArrayDeque<String>();
-        AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", ".*\\.jp2", ".md5");
+        AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", getDataFilePattern(), getChecksumPostfix());
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
