@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
  */
 public class RecursiveFedoraCleanerTest {
 
-    @Test
+    @Test(groups = "integrationTest")
     public void testCleanFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         EnhancedFedora fedora = (new SimpleFedoraIngesterTestIT()).getEnhancedFedora();
         String label = "path:B400022028241-RT1";
