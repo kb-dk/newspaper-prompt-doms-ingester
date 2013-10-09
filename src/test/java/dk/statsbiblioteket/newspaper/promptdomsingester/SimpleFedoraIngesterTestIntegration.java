@@ -69,7 +69,7 @@ public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTes
         assertEquals(2, relations.size());
         //assert that B400022028241-RT1/400022028241-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B exists and has an "alto" datastream
         foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B").get(0);
-        String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "alto", new Date().getTime());
+        String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
     }
 }

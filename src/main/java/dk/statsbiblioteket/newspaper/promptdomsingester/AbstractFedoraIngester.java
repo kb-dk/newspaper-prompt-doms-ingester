@@ -126,7 +126,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                         if (splitName.length < 2) {
                             throw new DomsIngesterException("Cannot find datastream name in " + attributeParsingEvent.getLocalname());
                         }
-                        String datastreamName = splitName[splitName.length - 2];
+                        String datastreamName = splitName[splitName.length - 2].toUpperCase();
                         log.debug("Ingesting datastream '" + datastreamName + "'");
                         String metadataText = null;
                         try {
