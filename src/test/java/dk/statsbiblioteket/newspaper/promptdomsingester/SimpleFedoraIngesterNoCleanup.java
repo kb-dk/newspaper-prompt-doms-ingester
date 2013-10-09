@@ -4,7 +4,6 @@ import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
-import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -22,7 +21,7 @@ import static org.testng.Assert.assertTrue;
  * Time: 1:17 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleFedoraIngesterNoCleanup extends SimpleFedoraIngesterTest {
+public class SimpleFedoraIngesterNoCleanup extends AbstractSimpleFedoraIngesterTest {
 
     @Override
     public EnhancedFedora getEnhancedFedora() throws JAXBException, PIDGeneratorException, MalformedURLException {

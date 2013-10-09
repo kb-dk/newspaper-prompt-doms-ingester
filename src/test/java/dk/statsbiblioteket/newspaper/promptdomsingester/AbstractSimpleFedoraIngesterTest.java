@@ -11,17 +11,18 @@ import java.net.MalformedURLException;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Created with IntelliJ IDEA.
- * User: csr
- * Date: 10/4/13
- * Time: 1:17 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
-public abstract class SimpleFedoraIngesterTest {
+public abstract class AbstractSimpleFedoraIngesterTest {
 
-    abstract EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException;
+    protected abstract EnhancedFedora getEnhancedFedora() throws MalformedURLException, JAXBException, PIDGeneratorException;
     String pid;
 
+    /**
+     * Test that we can ingest a sample batch. Subclasses of this class should appropriate asserts to test that this
+     * test does what it should.
+     * @throws Exception
+     */
     @Test
     public void testIngest() throws Exception {
         //SimpleFedoraIngester ingester = new SimpleFedoraIngester(getEnhancedFedora(), new String[]{".jp2"}, new String[]{"info:Batch"});

@@ -24,7 +24,7 @@ import static org.testng.Assert.assertTrue;
 /**
  *
  */
-public class SimpleFedoraIngesterTestIntegration extends SimpleFedoraIngesterTest {
+public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest {
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
 
 

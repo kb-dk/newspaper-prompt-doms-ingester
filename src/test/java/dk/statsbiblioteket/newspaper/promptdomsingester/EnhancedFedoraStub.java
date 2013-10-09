@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- *
+ * Stub implementation of EnhancedFedora which just counts the number of calls to various methods
  */
-public class TestEnhancedFedoraImpl implements EnhancedFedora {
+public class EnhancedFedoraStub implements EnhancedFedora {
 
     int objectsCreated = 0;
     int externalDatastreamsAdded = 0;
@@ -37,7 +37,7 @@ public class TestEnhancedFedoraImpl implements EnhancedFedora {
     Map<String, String> labelsAndPids = new HashMap<>();
     Map<String, List<String>> pidsAndStreams = new HashMap<>();
 
-    public TestEnhancedFedoraImpl(List<String> allowedDatastreams) {
+    public EnhancedFedoraStub(List<String> allowedDatastreams) {
         this.allowedDatastreams = allowedDatastreams;
     }
 

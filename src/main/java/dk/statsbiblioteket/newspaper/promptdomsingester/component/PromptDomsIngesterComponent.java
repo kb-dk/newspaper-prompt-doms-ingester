@@ -4,7 +4,6 @@ import com.google.common.base.Throwables;
 import com.netflix.curator.framework.CuratorFramework;
 import com.netflix.curator.framework.CuratorFrameworkFactory;
 import com.netflix.curator.retry.ExponentialBackoffRetry;
-import com.sun.javafx.fxml.PropertyNotFoundException;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClient;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClientImpl;
 import dk.statsbiblioteket.autonomous.AutonomousComponent;
@@ -114,10 +113,10 @@ public class PromptDomsIngesterComponent implements RunnableComponent {
     }
 
 
-    private static void checkProperties(Properties props, String[] propnames) throws PropertyNotFoundException {
+    private static void checkProperties(Properties props, String[] propnames) throws RuntimeException {
             for (String prop: propnames) {
                 if (props.getProperty(prop) == null) {
-                    throw new PropertyNotFoundException("Property not found: " + prop);
+                    throw new RuntimeException("Property not found: " + prop);
                 }
             }
     }

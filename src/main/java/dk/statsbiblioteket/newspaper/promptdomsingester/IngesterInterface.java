@@ -10,7 +10,7 @@ import java.io.File;
 import java.security.MessageDigest;
 
 /**
- *
+ * Interface defining the functionality for an ingester.
  */
 public interface IngesterInterface {
 
@@ -20,6 +20,6 @@ public interface IngesterInterface {
      * @param rootDir
      * @return the DOMS pid of the root object.
      */
-    String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException, DomsIngesterException;
+    String ingest(File rootDir) throws Exception;
 
 }

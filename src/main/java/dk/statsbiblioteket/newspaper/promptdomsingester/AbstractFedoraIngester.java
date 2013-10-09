@@ -38,25 +38,25 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
      * Get an EnhancedFedora object for the repository in which ingest is required.
      * @return  the enhanced fedora.
      */
-    public abstract EnhancedFedora getEnhancedFedora();
+    protected abstract EnhancedFedora getEnhancedFedora();
 
     /**
      * Returns a regexp which can identify data files in this collection, e.g. ".*\\.jp2"
      * @return the regexp as a String
      */
-    public abstract String getDataFilePattern();
+    protected abstract String getDataFilePattern();
 
     /**
      * Returns the postfix for checksum files in this collection. e.g. ".md5"
      * @return  the checksum postfix.
      */
-    public abstract String getChecksumPostfix();
+    protected abstract String getChecksumPostfix();
 
     /**
      * Returns a list of collections all new objects must belong to. May be empty.
      * @return
      */
-    public abstract List<String> getCollections();
+    protected abstract List<String> getCollections();
 
     /**
      * The logic of this method it that it maintains two stacks in parallel to tell it exactly where it is in the
