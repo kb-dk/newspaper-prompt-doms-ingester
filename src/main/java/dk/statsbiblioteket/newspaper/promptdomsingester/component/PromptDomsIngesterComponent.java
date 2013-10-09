@@ -82,6 +82,9 @@ public class PromptDomsIngesterComponent implements RunnableComponent {
         futureEvents.add(component.getEventID());
         AutonomousComponent autonomous = new AutonomousComponent(component, properties, lockClient, eventClient, 1, priorEvents, priorEventsExclude, futureEvents);
         Map<String, Boolean> result = autonomous.call();
+        for (Map.Entry<String, Boolean> stringBooleanEntry : result.entrySet()) {
+            System.out.println("Worked on "+stringBooleanEntry.getKey()+" and achived "+(stringBooleanEntry.getValue()?"success":"failure"));
+        }
     }
 
     private static Properties readProperties(String[] args) throws IOException {
