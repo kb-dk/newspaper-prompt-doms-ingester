@@ -9,6 +9,6 @@ public class DomsIngesterException extends Exception {
     }
 
     public DomsIngesterException(Throwable cause) {
-        throw new RuntimeException("Not yet implemented");
+        super(cause);
     }
 }
