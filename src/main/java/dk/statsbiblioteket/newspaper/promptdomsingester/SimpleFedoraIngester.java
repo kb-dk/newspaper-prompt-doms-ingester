@@ -7,7 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * A concrete implementation of AbstractFedoraIngester which should be capable of traversing and ingesting any
+ * hierarchically structured collection of metadata and data files satisfying the assumptions described in
+ * https://sbforge.org/display/NEWSPAPER/DOMS+object+model+creation+from+tree
  *
+ * There is a utility factory method for the specific case of the Newspaper collection.
  */
 public class SimpleFedoraIngester extends AbstractFedoraIngester {
 

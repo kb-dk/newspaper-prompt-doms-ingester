@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -26,7 +24,7 @@ import java.util.List;
 /**
  * Class containing the actual logic for traversing the directory tree and ingesting the data to
  * DOMS. Concrete implementing subclasses need only specify the logic for determining which files are
- * data/metadata/checksums, as well as providing a connection to Fedora.
+ * data/checksums, as well as providing a connection to Fedora.
  */
 public abstract class AbstractFedoraIngester implements IngesterInterface {
 
@@ -60,6 +58,20 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
      */
     public abstract List<String> getCollections();
 
+    /**
+     * The logic of this method it that it maintains two stacks in parallel to tell it exactly where it is in the
+     * directory hierarchy. pathElementStack is simply a stack of directory names and pidStack is a stack of the
+     * corresponding DOMS pids. These stacks are pushed for each NodeBegin event and popped for each NodeEnd event.
+     * Thus Attributes (ie metadata files) are always ingested as datastreams to the object currently at the top of the
+     * stack. The pidStack tells us which object to modify, the pathElementStack tells us how to label the modifications.
+     * @param rootDir
+     * @return
+     * @throws BackendInvalidCredsException
+     * @throws BackendMethodFailedException
+     * @throws PIDGeneratorException
+     * @throws BackendInvalidResourceException
+     * @throws DomsIngesterException
+     */
     @Override
     public String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException, DomsIngesterException {
         EnhancedFedora fedora = getEnhancedFedora();
