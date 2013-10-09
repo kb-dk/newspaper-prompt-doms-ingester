@@ -89,7 +89,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                         fedora.addRelation(parentPid, null, hasPartRelation, currentNodePid, false, comment);
                         log.debug(comment);
                     }
-                    if (isDataFile(dir)) {
+                    if (dir.matches(getDataFilePattern())) {
                         String comment = "Added relationship " + parentPid + " hasFile " + currentNodePid;
                         fedora.addRelation(parentPid, null, hasFileRelation, currentNodePid, false, comment);
                         log.debug(comment);

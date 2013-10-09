@@ -7,16 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An implementation of AbstractFedoraIngester where the types of file (data/metadata/checksum) can
- * be determined simply by looking at the file suffixes. (This is probably all that we will ever need,
- * but there is no fundamental problem if we ever need to write alternative implementations that look at
- * the file contents or, say, match a regexp to the filename instead.)
+ *
  */
 public class SimpleFedoraIngester extends AbstractFedoraIngester {
 
     private EnhancedFedora fedora;
-    private String[] metadataFileSuffixes;
-    private String[] checksumFileSuffixes;
     private String[] collections;
 
     private String dataFilePattern;
@@ -29,10 +24,11 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
      *                        ingested.
      * @param collections the DOMS collections in which to ingest objects.
      */
-    public SimpleFedoraIngester(EnhancedFedora fedora, String dataFilePattern, String[] collections) {
+    public SimpleFedoraIngester(EnhancedFedora fedora, String dataFilePattern, String checksumPostfix, String[] collections) {
         this.fedora = fedora;
         this.collections = collections;
         this.dataFilePattern = dataFilePattern;
+        this.checksumPostfix = checksumPostfix;
     }
 
     /**
@@ -42,9 +38,7 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
      * @return the ingester.
      */
     public static SimpleFedoraIngester getNewspaperInstance(EnhancedFedora fedora) {
-        SimpleFedoraIngester ingester = new SimpleFedoraIngester(fedora, ".*\\.jp2", new String[]{"info:Batch"});
-        ingester.setChecksumPostfix(".md5");
-        return ingester;
+        return new SimpleFedoraIngester(fedora, ".*\\.jp2", ".md5",  new String[]{"info:Batch"});
     }
 
     @Override
@@ -55,10 +49,6 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
     @Override
     public String getChecksumPostfix() {
         return checksumPostfix;
-    }
-
-    public void setChecksumPostfix(String checksumPostfix) {
-        this.checksumPostfix = checksumPostfix;
     }
 
     @Override
@@ -73,12 +63,5 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
         }
         return new ArrayList<String>(Arrays.asList(collections));
     }
-
-    @Override
-    public boolean isDataFile(String localname) {
-        return localname.matches(dataFilePattern);
-    }
-
-
 
 }
