@@ -85,11 +85,12 @@
                     <descriptors>
                         <descriptor>src/main/assembly/assembly.xml</descriptor>
                     </descriptors>
+                    <attach>true</attach>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>assembly</goal>
+                            <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
