@@ -26,17 +26,16 @@ import java.util.List;
  * DOMS. Concrete implementing subclasses need only specify the logic for determining which files are
  * data/checksums, as well as providing a connection to Fedora.
  */
-public abstract class AbstractFedoraIngester implements IngesterInterface {
-
-    private Logger log = LoggerFactory.getLogger(getClass());
+public abstract class AbstractFedoraIngester
+        implements IngesterInterface {
 
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
-    String hasFileRelation = "info:fedora/fedora-system:def/relations-external#hasFile";
-
+    String hasFileRelation = "http://doms.statsbiblioteket.dk/relations/default/0/1/#hasFile";
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * Get an EnhancedFedora object for the repository in which ingest is required.
-     * @return  the enhanced fedora.
+     * @return the enhanced fedora.
      */
     protected abstract EnhancedFedora getEnhancedFedora();
 
@@ -48,7 +47,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
 
     /**
      * Returns the postfix for checksum files in this collection. e.g. ".md5"
-     * @return  the checksum postfix.
+     * @return the checksum postfix.
      */
     protected abstract String getChecksumPostfix();
 
@@ -64,16 +63,20 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
      * corresponding DOMS pids. These stacks are pushed for each NodeBegin event and popped for each NodeEnd event.
      * Thus Attributes (ie metadata files) are always ingested as datastreams to the object currently at the top of the
      * stack. The pidStack tells us which object to modify, the pathElementStack tells us how to label the modifications.
-     * @param rootDir
-     * @return
-     * @throws BackendInvalidCredsException
-     * @throws BackendMethodFailedException
-     * @throws PIDGeneratorException
-     * @throws BackendInvalidResourceException
-     * @throws DomsIngesterException
+     *
+     * @param rootDir the root dir to parse from
+     *
+     * @return the doms pid of the root object created
+     * @throws DomsIngesterException if failing to read a file or any file is encountered without a checksum
      */
     @Override
-    public String ingest(File rootDir) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException, BackendInvalidResourceException, DomsIngesterException {
+    public String ingest(File rootDir)
+            throws
+            BackendInvalidCredsException,
+            BackendMethodFailedException,
+            PIDGeneratorException,
+            BackendInvalidResourceException,
+            DomsIngesterException {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<String>();
         Deque<String> pathElementStack = new ArrayDeque<String>();
@@ -82,7 +85,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
             switch (event.getType()) {
-                case NodeBegin :
+                case NodeBegin:
                     String dir = event.getLocalname();
                     pathElementStack.addFirst(dir);
                     String id = "path:" + getPath(pathElementStack);
@@ -110,27 +113,28 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                 case NodeEnd:
                     pidStack.removeFirst();
                     pathElementStack.removeFirst();
+                    //Possible publish of object here?
                     break;
                 case Attribute:
                     AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
                     if (event.getLocalname().equals("contents")) {
+                        //Possibly check that you are in a DataFileDir before ignoring the event?
                         log.debug("Skipping contents attribute.");
                     } else {
                         String directoryPath = getPath(pathElementStack);
-                        String comment = "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath + " == " + pidStack.peekFirst();
+                        String comment =
+                                "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath
+                                + " == " + pidStack.peekFirst();
                         String filePath = directoryPath + "/" + event.getLocalname();
-                        List<String> alternativeIdentifiers = new ArrayList<String>();
+                        List<String> alternativeIdentifiers = new ArrayList<>();
                         alternativeIdentifiers.add(filePath);
                         log.debug(comment);
-                        String[] splitName = attributeParsingEvent.getLocalname().split("\\.");
-                        if (splitName.length < 2) {
-                            throw new DomsIngesterException("Cannot find datastream name in " + attributeParsingEvent.getLocalname());
-                        }
-                        String datastreamName = splitName[splitName.length - 2].toUpperCase();
+                        String datastreamName = getDatastreamName(attributeParsingEvent.getLocalname());
                         log.debug("Ingesting datastream '" + datastreamName + "'");
-                        String metadataText = null;
+                        String metadataText;
                         try {
-                            metadataText = CharStreams.toString(new InputStreamReader(attributeParsingEvent.getText(), "UTF-8"));
+                            metadataText = CharStreams
+                                    .toString(new InputStreamReader(attributeParsingEvent.getText(), "UTF-8"));
                         } catch (IOException e) {
                             throw new DomsIngesterException(e);
                         }
@@ -141,9 +145,18 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                             throw new DomsIngesterException(e);
                         }
                         if (checksum != null) {
-                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, checksum, alternativeIdentifiers, "Added by ingester.");
+                            fedora.modifyDatastreamByValue(pidStack.peekFirst(),
+                                                           datastreamName,
+                                                           metadataText,
+                                                           checksum,
+                                                           alternativeIdentifiers,
+                                                           "Added by ingester.");
                         } else {
-                            fedora.modifyDatastreamByValue(pidStack.peekFirst(), datastreamName, metadataText, alternativeIdentifiers, "Added by ingester.");
+                            fedora.modifyDatastreamByValue(pidStack.peekFirst(),
+                                                           datastreamName,
+                                                           metadataText,
+                                                           alternativeIdentifiers,
+                                                           "Added by ingester.");
 
                         }
                     }
@@ -153,18 +166,31 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         return rootPid;
     }
 
+    private static String getDatastreamName(String attributeName)
+            throws
+            DomsIngesterException {
+        String[] splitName = attributeName.split("\\.");
+        if (splitName.length < 2) {
+            throw new DomsIngesterException(
+                    "Cannot find datastream name in " + attributeName);
+        }
+        return splitName[splitName.length - 2].toUpperCase();
+    }
+
     /**
      * Returns the path to where we are now with "/" as separator.
+     *
      * @param path
+     *
      * @return
      */
     private String getPath(Deque<String> path) {
         String result = "";
-        for (String dir: path) {
+        for (String dir : path) {
             result = dir + "/" + result;
         }
         if (result.length() > 0) {
-            result = result.substring(0, result.length()-1);
+            result = result.substring(0, result.length() - 1);
         }
         return result;
     }
