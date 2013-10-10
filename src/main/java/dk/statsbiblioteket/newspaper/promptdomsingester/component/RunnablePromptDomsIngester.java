@@ -47,11 +47,10 @@ public class RunnablePromptDomsIngester implements RunnableComponent{
                               ResultCollector resultCollector)
             throws
             Exception {
-        Long batchId = batch.getBatchID();
-        Integer rt = batch.getRoundTripNumber();
-        File rootFile = new File(uploadDir, "B" + batchId + "-RT" + rt);
+
+        File rootFile = new File(uploadDir, batch.getFullID());
         if (!rootFile.exists()) {
-            resultCollector.addFailure(batchId + "",
+            resultCollector.addFailure(batch.getFullID(),
                                        "No Such File",
                                        getComponentName(),
                                        "File " + rootFile.getAbsolutePath() + " doesn't exist.");
@@ -62,7 +61,7 @@ public class RunnablePromptDomsIngester implements RunnableComponent{
         try {
             ingester.ingest(rootFile);
         } catch (Exception e) {
-            resultCollector.addFailure(batchId + "",
+            resultCollector.addFailure(batch.getFullID(),
                                        e.getClass().getName(),
                                        getComponentName(),
                                        e.getMessage(),
