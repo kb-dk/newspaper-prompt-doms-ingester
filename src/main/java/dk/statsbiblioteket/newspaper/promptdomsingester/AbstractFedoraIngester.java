@@ -6,14 +6,13 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceExcepti
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
-import dk.statsbiblioteket.doms.iterator.AbstractIterator;
-import dk.statsbiblioteket.doms.iterator.common.AttributeParsingEvent;
-import dk.statsbiblioteket.doms.iterator.common.ParsingEvent;
-import dk.statsbiblioteket.doms.iterator.filesystem.transforming.TransformingIteratorForFileSystems;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.AttributeParsingEvent;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.DataFileNodeBeginsParsingEvent;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.ParsingEvent;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
@@ -33,23 +32,16 @@ public abstract class AbstractFedoraIngester
     String hasFileRelation = "http://doms.statsbiblioteket.dk/relations/default/0/1/#hasFile";
     private Logger log = LoggerFactory.getLogger(getClass());
 
+
+
+
+
     /**
      * Get an EnhancedFedora object for the repository in which ingest is required.
      * @return the enhanced fedora.
      */
     protected abstract EnhancedFedora getEnhancedFedora();
 
-    /**
-     * Returns a regexp which can identify data files in this collection, e.g. ".*\\.jp2"
-     * @return the regexp as a String
-     */
-    protected abstract String getDataFilePattern();
-
-    /**
-     * Returns the postfix for checksum files in this collection. e.g. ".md5"
-     * @return the checksum postfix.
-     */
-    protected abstract String getChecksumPostfix();
 
     /**
      * Returns a list of collections all new objects must belong to. May be empty.
@@ -64,13 +56,13 @@ public abstract class AbstractFedoraIngester
      * Thus Attributes (ie metadata files) are always ingested as datastreams to the object currently at the top of the
      * stack. The pidStack tells us which object to modify, the pathElementStack tells us how to label the modifications.
      *
-     * @param rootDir the root dir to parse from
+     * @param iterator the iterator to parse from
      *
      * @return the doms pid of the root object created
      * @throws DomsIngesterException if failing to read a file or any file is encountered without a checksum
      */
     @Override
-    public String ingest(File rootDir)
+    public String ingest(TreeIterator iterator)
             throws
             BackendInvalidCredsException,
             BackendMethodFailedException,
@@ -79,16 +71,15 @@ public abstract class AbstractFedoraIngester
             DomsIngesterException {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<String>();
-        Deque<String> pathElementStack = new ArrayDeque<String>();
-        AbstractIterator<File> iterator = new TransformingIteratorForFileSystems(rootDir, "\\.", getDataFilePattern(), getChecksumPostfix());
+
+
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
             switch (event.getType()) {
                 case NodeBegin:
-                    String dir = event.getLocalname();
-                    pathElementStack.addFirst(dir);
-                    String id = "path:" + getPath(pathElementStack);
+                    String dir = event.getName();
+                    String id = "path:" + dir;
                     ArrayList<String> oldIds = new ArrayList<String>();
                     oldIds.add(id);
                     String logMessage = "Created object with DC id " + id;
@@ -104,7 +95,7 @@ public abstract class AbstractFedoraIngester
                         fedora.addRelation(parentPid, null, hasPartRelation, currentNodePid, false, comment);
                         log.debug(comment);
                     }
-                    if (dir.matches(getDataFilePattern())) {
+                    if (event instanceof DataFileNodeBeginsParsingEvent){
                         String comment = "Added relationship " + parentPid + " hasFile " + currentNodePid;
                         fedora.addRelation(parentPid, null, hasFileRelation, currentNodePid, false, comment);
                         log.debug(comment);
@@ -112,29 +103,28 @@ public abstract class AbstractFedoraIngester
                     break;
                 case NodeEnd:
                     pidStack.removeFirst();
-                    pathElementStack.removeFirst();
                     //Possible publish of object here?
                     break;
                 case Attribute:
                     AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
-                    if (event.getLocalname().equals("contents")) {
+                    if (event.getName().endsWith("/contents")) {
                         //Possibly check that you are in a DataFileDir before ignoring the event?
                         log.debug("Skipping contents attribute.");
                     } else {
-                        String directoryPath = getPath(pathElementStack);
+                        String directoryPath = event.getName();
                         String comment =
-                                "Adding datastream for " + attributeParsingEvent.getLocalname() + " to " + directoryPath
+                                "Adding datastream for " + attributeParsingEvent.getName() + " to " + directoryPath
                                 + " == " + pidStack.peekFirst();
-                        String filePath = directoryPath + "/" + event.getLocalname();
+                        String filePath = directoryPath + "/" + event.getName();
                         List<String> alternativeIdentifiers = new ArrayList<>();
                         alternativeIdentifiers.add(filePath);
                         log.debug(comment);
-                        String datastreamName = getDatastreamName(attributeParsingEvent.getLocalname());
+                        String datastreamName = getDatastreamName(attributeParsingEvent.getName());
                         log.debug("Ingesting datastream '" + datastreamName + "'");
                         String metadataText;
                         try {
                             metadataText = CharStreams
-                                    .toString(new InputStreamReader(attributeParsingEvent.getText(), "UTF-8"));
+                                    .toString(new InputStreamReader(attributeParsingEvent.getData(), "UTF-8"));
                         } catch (IOException e) {
                             throw new DomsIngesterException(e);
                         }
@@ -175,24 +165,6 @@ public abstract class AbstractFedoraIngester
                     "Cannot find datastream name in " + attributeName);
         }
         return splitName[splitName.length - 2].toUpperCase();
-    }
-
-    /**
-     * Returns the path to where we are now with "/" as separator.
-     *
-     * @param path
-     *
-     * @return
-     */
-    private String getPath(Deque<String> path) {
-        String result = "";
-        for (String dir : path) {
-            result = dir + "/" + result;
-        }
-        if (result.length() > 0) {
-            result = result.substring(0, result.length() - 1);
-        }
-        return result;
     }
 
 }

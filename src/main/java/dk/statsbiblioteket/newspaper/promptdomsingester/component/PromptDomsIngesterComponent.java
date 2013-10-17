@@ -5,12 +5,11 @@ import com.netflix.curator.framework.CuratorFrameworkFactory;
 import com.netflix.curator.retry.ExponentialBackoffRetry;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClient;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClientImpl;
-import dk.statsbiblioteket.autonomous.AutonomousComponent;
-import dk.statsbiblioteket.autonomous.RunnableComponent;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
-import dk.statsbiblioteket.newspaper.processmonitor.datasources.EventID;
+import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponent;
+import dk.statsbiblioteket.medieplatform.autonomous.RunnableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,18 +55,17 @@ public class PromptDomsIngesterComponent {
         EnhancedFedoraImpl eFedora =
                 new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty("pidgenerator.location"), null);
         File uploadDir = new File(properties.getProperty("newspaper.batch.superdir"));
-        RunnableComponent component = new RunnablePromptDomsIngester(eFedora, uploadDir);
+        RunnableComponent component = new RunnablePromptDomsIngester(properties,eFedora);
         CuratorFramework lockClient = CuratorFrameworkFactory
                 .newClient(properties.getProperty("lockserver"), new ExponentialBackoffRetry(1000, 3));
         lockClient.start();
         BatchEventClient eventClient = createEventClient(properties);
-        List<EventID> priorEvents = new ArrayList<>();
-        List<EventID> priorEventsExclude = new ArrayList<>();
-        List<EventID> futureEvents = new ArrayList<>();
-        priorEvents.add(EventID.Data_Received);
+        List<String> priorEvents = new ArrayList<>();
+        List<String> priorEventsExclude = new ArrayList<>();
+        List<String> futureEvents = new ArrayList<>();
+        priorEvents.add("Data_Received");
         futureEvents.add(component.getEventID());
         AutonomousComponent autonomous = new AutonomousComponent(component,
-                                                                 properties,
                                                                  lockClient,
                                                                  eventClient,
                                                                  1,

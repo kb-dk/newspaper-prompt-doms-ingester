@@ -1,13 +1,7 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester;
 
 
-import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
-import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
-import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
-import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
-
-import java.io.File;
-import java.security.MessageDigest;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
 
 /**
  * Interface defining the functionality for an ingester.
@@ -15,11 +9,11 @@ import java.security.MessageDigest;
 public interface IngesterInterface {
 
     /**
-     * Given a root directory, this method ingests the contents of the root directory to DOMS with the
+     * Given a iterator, this method ingests the contents of the root directory to DOMS with the
      * name of the root directory as the label of the root object in DOMS.
-     * @param rootDir
+     * @param iterator
      * @return the DOMS pid of the root object.
      */
-    String ingest(File rootDir) throws Exception;
+    String ingest(TreeIterator iterator) throws Exception;
 
 }

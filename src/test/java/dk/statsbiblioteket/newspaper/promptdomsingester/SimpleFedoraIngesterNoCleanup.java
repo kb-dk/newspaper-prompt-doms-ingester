@@ -4,6 +4,7 @@ import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
+import dk.statsbiblioteket.medieplatform.autonomous.iterator.filesystem.transforming.TransformingIteratorForFileSystems;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import static org.testng.Assert.assertTrue;
 
@@ -44,7 +46,9 @@ public class SimpleFedoraIngesterNoCleanup extends AbstractSimpleFedoraIngesterT
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testRoot = new File(rootTestdataDir, "small-test-batch_contents-included/B400022028242-RT3");
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
-        String rootPid = ingester.ingest(testRoot);
+        TransformingIteratorForFileSystems iterator =
+                new TransformingIteratorForFileSystems(testRoot, Pattern.quote("."), ".*\\.jp2$", ".md5");
+        String rootPid = ingester.ingest(iterator);
         pid = rootPid;
         System.out.println("Created object tree rooted at " + rootPid);
     }
