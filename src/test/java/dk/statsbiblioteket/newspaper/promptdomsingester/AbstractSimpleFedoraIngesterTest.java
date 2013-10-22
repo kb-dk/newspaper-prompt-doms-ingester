@@ -30,7 +30,7 @@ public abstract class AbstractSimpleFedoraIngesterTest {
         //SimpleFedoraIngester ingester = new SimpleFedoraIngester(getEnhancedFedora(), new String[]{".jp2"}, new String[]{"info:Batch"});
         SimpleFedoraIngester ingester = SimpleFedoraIngester.getNewspaperInstance(getEnhancedFedora());
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
-        File testRoot = new File(rootTestdataDir, "small-test-batch_contents-included/B400022028241-RT1");
+        File testRoot = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1");
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
         TransformingIteratorForFileSystems iterator =
                 new TransformingIteratorForFileSystems(testRoot, Pattern.quote("."), ".*\\.jp2$", ".md5");
