@@ -31,7 +31,7 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
 
     @Override
     public String getComponentVersion() {
-        return "1.0";
+        return getClass().getPackage().getImplementationVersion();
     }
 
     @Override
