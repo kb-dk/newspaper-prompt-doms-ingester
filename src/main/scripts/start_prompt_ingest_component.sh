@@ -1,5 +1,7 @@
 #!/bin/sh
 
-SCRIPT_DIR=$(dirname "$0")
+SCRIPT_DIR=$(dirname $(readlink -f $0))
 
-java -classpath "$SCRIPT_DIR/../lib/*" dk.statsbiblioteket.newspaper.promptdomsingester.component.PromptDomsIngesterComponent $SCRIPT_DIR/../conf/config.properties
+java java -classpath "$SCRIPT_DIR/../conf:$SCRIPT_DIR/../lib/*" \
+ dk.statsbiblioteket.newspaper.promptdomsingester.component.PromptDomsIngesterComponent \
+ $SCRIPT_DIR/../conf/config.properties
