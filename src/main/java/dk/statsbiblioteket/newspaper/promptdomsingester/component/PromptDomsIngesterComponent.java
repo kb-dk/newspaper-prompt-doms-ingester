@@ -68,7 +68,7 @@ public class PromptDomsIngesterComponent {
         AutonomousComponent autonomous = new AutonomousComponent(component,
                                                                  lockClient,
                                                                  eventClient,
-                                                                 1,
+                                                                 1,//properties.getProperty("maxThreads",1),
                                                                  priorEvents,
                                                                  priorEventsExclude,
                                                                  futureEvents);
