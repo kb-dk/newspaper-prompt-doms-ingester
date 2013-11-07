@@ -6,7 +6,7 @@
   <parent>
     <groupId>dk.statsbiblioteket.newspaper</groupId>
     <artifactId>newspaper-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.3</version>
   </parent>
 
   <groupId>dk.statsbiblioteket.newspaper</groupId>
@@ -27,9 +27,10 @@
   </repositories>
 
   <scm>
-    <url>https://github.com/statsbiblioteket/newspaper-mfpak-integration</url>
-    <connection>scm:https://github.com/statsbiblioteket/newspaper-mfpak-integration.git</connection>
-    <developerConnection>scm:git@github.com:statsbiblioteket/newspaper-mfpak-integration.git</developerConnection>
+    <url>https://github.com/statsbiblioteket/newspaper-prompt-doms-ingester</url>
+    <connection>scm:git:https://github.com/statsbiblioteket/newspaper-prompt-doms-ingester.git</connection>
+    <developerConnection>scm:git:git@github.com:statsbiblioteket/newspaper-prompt-doms-ingester.git
+    </developerConnection>
     <tag>HEAD</tag>
   </scm>
 
@@ -57,12 +58,12 @@
     <dependency>
       <groupId>dk.statsbiblioteket.doms.central</groupId>
       <artifactId>centralWebservice-lib</artifactId>
-      <version>0.0.28-SNAPSHOT</version>
+      <version>0.0.29</version>
     </dependency>
     <dependency>
       <groupId>dk.statsbiblioteket.newspaper</groupId>
       <artifactId>tree-processor</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -79,7 +80,7 @@
     <dependency>
       <groupId>dk.statsbiblioteket.newspaper</groupId>
       <artifactId>autonomous-component</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>0.2</version>
       <exclusions>
         <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
