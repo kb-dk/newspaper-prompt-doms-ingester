@@ -1,6 +1,10 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester;
 
-import dk.statsbiblioteket.doms.central.connectors.*;
+import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
+import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
+import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
+import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
+import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelation;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
@@ -64,11 +68,11 @@ public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1").get(0);
         assertEquals(pid, foundPid);
-        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-14").get(0);
+        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-1").get(0);
         List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(pid, hasPartRelation, new Date().getTime());
         assertEquals(2, relations.size());
         //assert that B400022028241-RT1/400022028241-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B exists and has an "alto" datastream
-        foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-14/1795-06-13-01/adresseavisen1759-1795-06-13-01-0007B").get(0);
+        foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028241-RT1/400022028241-1/1795-06-13-01/adresseavisen1759-1795-06-13-01-0007B").get(0);
         String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
     }
