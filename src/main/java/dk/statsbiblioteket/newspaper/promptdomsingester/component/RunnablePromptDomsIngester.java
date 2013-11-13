@@ -25,16 +25,6 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
     }
 
     @Override
-    public String getComponentName() {
-        return "Prompt Doms Ingester";
-    }
-
-    @Override
-    public String getComponentVersion() {
-        return getClass().getPackage().getImplementationVersion();
-    }
-
-    @Override
     public String getEventID() {
         return "Data_Archived";
     }
