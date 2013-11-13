@@ -116,12 +116,9 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             //Possibly check that you are in a DataFileDir before ignoring the event?
             log.debug("Skipping contents attribute.");
         } else {
-            String directoryPath = event.getName();
-            String comment =
-                    "Adding datastream for " + event.getName() + " to " + directoryPath + " == " + pidStack.peekFirst();
-            String filePath = directoryPath + "/" + event.getName();
+            String comment = "Adding datastream for " + event.getName() + " == " + pidStack.peekFirst();
             List<String> alternativeIdentifiers = new ArrayList<>();
-            alternativeIdentifiers.add(filePath);
+            alternativeIdentifiers.add(event.getName());
             log.debug(comment);
             String datastreamName = getDatastreamName(event.getName());
             log.debug("Ingesting datastream '" + datastreamName + "'");
