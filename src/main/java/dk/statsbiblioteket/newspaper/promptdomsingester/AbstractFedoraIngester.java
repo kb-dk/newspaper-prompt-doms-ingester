@@ -162,7 +162,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                                                                   BackendInvalidCredsException {
         String currentNodePid = pidStack.removeFirst();
         if (currentNodePid != null) {
-            Pair<NodeBeginsParsingEvent, List<String>> children = childOf.get(currentNodePid);
+            Pair<NodeBeginsParsingEvent, List<String>> children = childOf.remove(currentNodePid);
 
             for (String childPid : children.getRight()) {
 
