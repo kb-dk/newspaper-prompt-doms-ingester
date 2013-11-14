@@ -81,19 +81,20 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         EnhancedFedora fedora = getEnhancedFedora();
         Deque<String> pidStack = new ArrayDeque<>();
 
-        Map<String,Pair<NodeBeginsParsingEvent,List<String>>> childOf = new HashMap<>();
+        Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf = new HashMap<>();
 
+        boolean checkExistence = true;
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();
             switch (event.getType()) {
                 case NodeBegin:
                     NodeBeginsParsingEvent nodeBeginsParsingEvent = (NodeBeginsParsingEvent) event;
-                    rootPid = handleNodeBegin(fedora, pidStack, rootPid, nodeBeginsParsingEvent,childOf);
+                    rootPid = handleNodeBegin(fedora, pidStack, rootPid, nodeBeginsParsingEvent, childOf);
                     break;
                 case NodeEnd:
                     NodeEndParsingEvent nodeEndParsingEvent = (NodeEndParsingEvent) event;
-                    handleNodeEnd(fedora, pidStack, rootPid, nodeEndParsingEvent,childOf);
+                    handleNodeEnd(fedora, pidStack, rootPid, nodeEndParsingEvent, childOf);
                     break;
                 case Attribute:
                     AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
@@ -104,15 +105,25 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         return rootPid;
     }
 
-    private void handleAttribute(EnhancedFedora fedora,
-                                 Deque<String> pidStack,
-                                 String rootpid,
+    private String exists(EnhancedFedora fedora, NodeBeginsParsingEvent nodeBeginsParsingEvent) throws
+                                                                                                BackendInvalidCredsException,
+                                                                                                BackendMethodFailedException {
+        List<String> founds = fedora.findObjectFromDCIdentifier(getDCidentifier(nodeBeginsParsingEvent));
+        if (founds.size() > 0) {
+            return founds.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    private void handleAttribute(EnhancedFedora fedora, Deque<String> pidStack, String rootpid,
                                  AttributeParsingEvent event) throws
                                                               DomsIngesterException,
                                                               BackendInvalidCredsException,
                                                               BackendMethodFailedException,
                                                               BackendInvalidResourceException {
-        if (event.getName().endsWith("/contents")) {
+        if (event.getName()
+                 .endsWith("/contents")) {
             //Possibly check that you are in a DataFileDir before ignoring the event?
             log.debug("Skipping contents attribute.");
         } else {
@@ -130,36 +141,36 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             }
             String checksum = null;
             try {
-                checksum = event.getChecksum().toLowerCase();
+                checksum = event.getChecksum()
+                                .toLowerCase();
             } catch (IOException e) {
                 throw new DomsIngesterException(e);
             }
             if (checksum != null) {
-                fedora.modifyDatastreamByValue(pidStack.peekFirst(),
-                                               datastreamName,
-                                               metadataText,
-                                               checksum,
-                                               alternativeIdentifiers,
-                                               "Added by ingester.");
+                fedora.modifyDatastreamByValue(
+                        pidStack.peekFirst(),
+                        datastreamName,
+                        metadataText,
+                        checksum,
+                        alternativeIdentifiers,
+                        "Added by ingester.");
             } else {
-                fedora.modifyDatastreamByValue(pidStack.peekFirst(),
-                                               datastreamName,
-                                               metadataText,
-                                               alternativeIdentifiers,
-                                               "Added by ingester.");
+                fedora.modifyDatastreamByValue(
+                        pidStack.peekFirst(),
+                        datastreamName,
+                        metadataText,
+                        alternativeIdentifiers,
+                        "Added by ingester.");
 
             }
         }
     }
 
-    private void handleNodeEnd(EnhancedFedora fedora,
-                               Deque<String> pidStack,
-                               String rootPid,
-                               ParsingEvent event,
-                               Map<String,Pair<NodeBeginsParsingEvent,List<String>>> childOf) throws
-                                                                  BackendMethodFailedException,
-                                                                  BackendInvalidResourceException,
-                                                                  BackendInvalidCredsException {
+    private void handleNodeEnd(EnhancedFedora fedora, Deque<String> pidStack, String rootPid, ParsingEvent event,
+                               Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf) throws
+                                                                                                BackendMethodFailedException,
+                                                                                                BackendInvalidResourceException,
+                                                                                                BackendInvalidCredsException {
         String currentNodePid = pidStack.removeFirst();
         if (currentNodePid != null) {
             Pair<NodeBeginsParsingEvent, List<String>> children = childOf.remove(currentNodePid);
@@ -182,34 +193,41 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         //Possible publish of object here?
     }
 
-    private String handleNodeBegin(EnhancedFedora fedora,
-                                   Deque<String> pidStack,
-                                   String rootPid,
+    private String handleNodeBegin(EnhancedFedora fedora, Deque<String> pidStack, String rootPid,
                                    NodeBeginsParsingEvent event,
-                                   Map<String,Pair<NodeBeginsParsingEvent,List<String>>> childOf) throws
-                                                       BackendInvalidCredsException,
-                                                       BackendMethodFailedException,
-                                                       PIDGeneratorException,
-                                                       BackendInvalidResourceException {
-        String dir = event.getName();
-        String id = "path:" + dir;
-        ArrayList<String> oldIds = new ArrayList<>();
-        oldIds.add(id);
-        String logMessage = "Created object with DC id " + id;
-        String currentNodePid = fedora.newEmptyObject(oldIds, getCollections(), logMessage);
-        log.debug(logMessage + " / " + currentNodePid);
+                                   Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf) throws
+                                                                                                    BackendInvalidCredsException,
+                                                                                                    BackendMethodFailedException,
+                                                                                                    PIDGeneratorException,
+                                                                                                    BackendInvalidResourceException {
+        String id = getDCidentifier(event);
+        String currentNodePid = exists(fedora, event);
+        if (currentNodePid == null) {
+            ArrayList<String> oldIds = new ArrayList<>();
+            oldIds.add(id);
+            String logMessage = "Created object with DC id " + id;
+            currentNodePid = fedora.newEmptyObject(oldIds, getCollections(), logMessage);
+            log.debug(logMessage + " / " + currentNodePid);
+        }
         String parentPid = pidStack.peekFirst();
         if (rootPid == null) {
             rootPid = currentNodePid;
         }
         pidStack.addFirst(currentNodePid);
-        childOf.put(currentNodePid,new Pair<NodeBeginsParsingEvent, List<String>>(event,new ArrayList<String>()));
+        childOf.put(currentNodePid, new Pair<NodeBeginsParsingEvent, List<String>>(event, new ArrayList<String>()));
 
         if (parentPid != null) {
-            childOf.get(parentPid).getRight().add(currentNodePid);
+            childOf.get(parentPid)
+                   .getRight()
+                   .add(currentNodePid);
         }
 
         return rootPid;
+    }
+
+    private String getDCidentifier(NodeBeginsParsingEvent event) {
+        String dir = event.getName();
+        return "path:" + dir;
     }
 
 }
