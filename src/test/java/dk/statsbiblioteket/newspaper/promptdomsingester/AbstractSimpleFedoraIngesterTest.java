@@ -37,7 +37,7 @@ public abstract class AbstractSimpleFedoraIngesterTest {
         SimpleFedoraIngester ingester = SimpleFedoraIngester.getNewspaperInstance(getEnhancedFedora());
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");
-        File testRoot = new File(System.getProperty("java.io.tmpdir"), "B400022028242-RT1");
+        File testRoot = new File(System.getProperty("user.dir")+"/target/temp/", "B400022028242-RT1");
 
         if (testRoot.isDirectory()) {
             Files.delete(testRoot);
