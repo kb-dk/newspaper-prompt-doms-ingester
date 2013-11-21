@@ -7,6 +7,7 @@ import dk.statsbiblioteket.medieplatform.autonomous.Batch;
 import dk.statsbiblioteket.medieplatform.autonomous.ResultCollector;
 import dk.statsbiblioteket.newspaper.promptdomsingester.IngesterInterface;
 import dk.statsbiblioteket.newspaper.promptdomsingester.SimpleFedoraIngester;
+import dk.statsbiblioteket.util.Strings;
 
 import java.util.Properties;
 
@@ -31,19 +32,16 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
 
     @Override
     public void doWorkOnBatch(Batch batch,
-                              ResultCollector resultCollector)
-            throws
-            Exception {
+                              ResultCollector resultCollector) {
         IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora);
         try {
             ingester.ingest(createIterator(batch));
         } catch (Exception e) {
             resultCollector.addFailure(batch.getFullID(),
-                                       e.getClass().getName(),
-                                       getComponentName(),
-                                       e.getMessage(),
-                                       Throwables.getStackTraceAsString(e));
-            return;
+                                       "exception",
+                                       e.getClass().getSimpleName(),
+                                       "Exception during ingest: " + e.toString(),
+                                       Strings.getStackTrace(e));
         }
     }
 
