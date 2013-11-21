@@ -37,13 +37,15 @@ public abstract class AbstractSimpleFedoraIngesterTest {
         SimpleFedoraIngester ingester = SimpleFedoraIngester.getNewspaperInstance(getEnhancedFedora());
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");
-        File testRoot = new File("/tmp/", "B400022028242-RT1");
+        File testRoot = new File(System.getProperty("java.io.tmpdir"), "B400022028242-RT1");
 
         if (testRoot.isDirectory()) {
             Files.delete(testRoot);
         }
+        testRoot.deleteOnExit();
 
         Files.copy(testSource, testRoot, true);
+
 
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
         TransformingIteratorForFileSystems iterator = new TransformingIteratorForFileSystems(
