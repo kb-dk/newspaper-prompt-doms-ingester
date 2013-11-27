@@ -1,6 +1,5 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
-import com.google.common.base.Throwables;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.medieplatform.autonomous.AbstractRunnableComponent;
 import dk.statsbiblioteket.medieplatform.autonomous.Batch;
@@ -27,7 +26,7 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
 
     @Override
     public String getEventID() {
-        return "Data_Archived";
+        return "Metadata_Archived";
     }
 
     @Override
