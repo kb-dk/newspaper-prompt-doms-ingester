@@ -8,6 +8,7 @@ import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelation;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
+import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -55,9 +56,9 @@ public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Credentials creds = new Credentials(props.getProperty("fedora.admin.username"), props.getProperty("fedora.admin.password"));
-        String fedoraLocation = props.getProperty("doms.server");
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, fedoraLocation, props.getProperty("pidgenerator.location") , null);
+        Credentials creds = new Credentials(props.getProperty(ConfigConstants.DOMS_USERNAME), props.getProperty(ConfigConstants.DOMS_PASSWORD));
+        String fedoraLocation = props.getProperty(ConfigConstants.DOMS_URL);
+        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, fedoraLocation, props.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL) , null);
         return eFedora;
     }
 

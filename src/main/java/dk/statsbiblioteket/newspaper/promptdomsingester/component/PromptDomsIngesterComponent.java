@@ -9,6 +9,8 @@ import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponent;
+import dk.statsbiblioteket.medieplatform.autonomous.CallResult;
+import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.RunnableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,14 +33,12 @@ public class PromptDomsIngesterComponent {
 
     private static Logger log = LoggerFactory.getLogger(PromptDomsIngesterComponent.class);
     private static String[] requiredProperties =
-            new String[]{"fedora.admin.username", "fedora.admin.password", "doms.server", "pidgenerator.location",
-                         "newspaper.batch.superdir", "lockserver", "summa"}; //etc.
+            new String[]{ConfigConstants.DOMS_USERNAME, ConfigConstants.DOMS_PASSWORD, ConfigConstants.DOMS_URL, ConfigConstants.DOMS_PIDGENERATOR_URL,
+                         ConfigConstants.AUTONOMOUS_MAXTHREADS, ConfigConstants.AUTONOMOUS_LOCKSERVER_URL, ConfigConstants.AUTONOMOUS_SBOI_URL}; //etc.
 
     /**
      * This method reads a properties file either as the first parameter on the command line or as the system variable
-     * newspaper.component.properties.file . The following parameters must be defined in the file:
-     * "fedora.admin.username", "fedora.admin.password", "doms.server", "pidgenerator.location",
-     * "newspaper.batch.superdir", "lockserver", "summa"
+     * newspaper.component.properties.file .
      *
      * @param args an array of length 1, where the first entry is a path to the properties file
      */
@@ -49,35 +49,33 @@ public class PromptDomsIngesterComponent {
             PIDGeneratorException {
         log.info("Entered " + PromptDomsIngesterComponent.class);
         Properties properties = readProperties(args);
-        Credentials creds = new Credentials(properties.getProperty("fedora.admin.username"),
-                                            properties.getProperty("fedora.admin.password"));
-        String fedoraLocation = properties.getProperty("doms.server");
+        Credentials creds = new Credentials(properties.getProperty(ConfigConstants.DOMS_USERNAME),
+                                            properties.getProperty(ConfigConstants.DOMS_PASSWORD));
+        String fedoraLocation = properties.getProperty(ConfigConstants.DOMS_URL);
         EnhancedFedoraImpl eFedora =
-                new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty("pidgenerator.location"), null);
-        File uploadDir = new File(properties.getProperty("newspaper.batch.superdir"));
+                new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL), null);
+        File uploadDir = new File(properties.getProperty(ConfigConstants.ITERATOR_FILESYSTEM_BATCHES_FOLDER));
         RunnableComponent component = new RunnablePromptDomsIngester(properties,eFedora);
         CuratorFramework lockClient = CuratorFrameworkFactory
-                .newClient(properties.getProperty("lockserver"), new ExponentialBackoffRetry(1000, 3));
+                .newClient(properties.getProperty(ConfigConstants.AUTONOMOUS_LOCKSERVER_URL), new ExponentialBackoffRetry(1000, 3));
         lockClient.start();
         BatchEventClient eventClient = createEventClient(properties);
         List<String> priorEvents = new ArrayList<>();
         List<String> priorEventsExclude = new ArrayList<>();
         List<String> futureEvents = new ArrayList<>();
-        priorEvents.add("Data_Received");
+        priorEvents.add(properties.getProperty(ConfigConstants.AUTONOMOUS_PAST_SUCCESSFUL_EVENTS));
         futureEvents.add(component.getEventID());
+        int maxThreads = Integer.parseInt(properties.getProperty(ConfigConstants.AUTONOMOUS_MAXTHREADS));
         AutonomousComponent autonomous = new AutonomousComponent(component,
                                                                  lockClient,
                                                                  eventClient,
-                                                                 1,//properties.getProperty("maxThreads",1),
+                                                                 maxThreads,
                                                                  priorEvents,
                                                                  priorEventsExclude,
                                                                  futureEvents);
-        Map<String, Boolean> result = autonomous.call();
-        for (Map.Entry<String, Boolean> stringBooleanEntry : result.entrySet()) {
-            System.out.println(
-                    "Worked on " + stringBooleanEntry.getKey() + " and achived " + (stringBooleanEntry.getValue() ?
-                                                                                    "success" : "failure"));
-        }
+        CallResult result = autonomous.call();
+        System.out.println(result);
+        System.exit(result.containsFailures());
     }
 
     /**
@@ -122,11 +120,11 @@ public class PromptDomsIngesterComponent {
      * @return an initialised batch event client
      */
     private static BatchEventClient createEventClient(Properties properties) {
-        return new BatchEventClientImpl(properties.getProperty("summa"),
-                                        properties.getProperty("doms.server"),
-                                        properties.getProperty("fedora.admin.username"),
-                                        properties.getProperty("fedora.admin.password"),
-                                        properties.getProperty("pidgenerator.location"));
+        return new BatchEventClientImpl(properties.getProperty(ConfigConstants.AUTONOMOUS_SBOI_URL),
+                                        properties.getProperty(ConfigConstants.DOMS_URL),
+                                        properties.getProperty(ConfigConstants.DOMS_USERNAME),
+                                        properties.getProperty(ConfigConstants.DOMS_PASSWORD),
+                                        properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL));
     }
 
     /**

@@ -109,7 +109,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                                                                                                 BackendInvalidCredsException,
                                                                                                 BackendMethodFailedException {
         List<String> founds = fedora.findObjectFromDCIdentifier(getDCidentifier(nodeBeginsParsingEvent));
-        if (founds.size() > 0) {
+        if (founds != null && founds.size() > 0) {
             return founds.get(0);
         } else {
             return null;
