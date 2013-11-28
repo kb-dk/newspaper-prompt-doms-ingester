@@ -63,9 +63,14 @@ public class PromptDomsIngesterComponent {
         List<String> priorEvents = new ArrayList<>();
         List<String> priorEventsExclude = new ArrayList<>();
         List<String> futureEvents = new ArrayList<>();
-        priorEvents.add(properties.getProperty(ConfigConstants.AUTONOMOUS_PAST_SUCCESSFUL_EVENTS));
+        String pastEventsProperty = properties.getProperty(ConfigConstants.AUTONOMOUS_PAST_SUCCESSFUL_EVENTS);
+        if (pastEventsProperty != null) {
+            for (String property: pastEventsProperty.split(",")) {
+                priorEvents.add(property);
+            }
+        }
         futureEvents.add(component.getEventID());
-        int maxThreads = Integer.parseInt(properties.getProperty(ConfigConstants.AUTONOMOUS_MAXTHREADS));
+        int maxThreads = Integer.parseInt(properties.getProperty(ConfigConstants.AUTONOMOUS_MAXTHREADS, "1"));
         AutonomousComponent autonomous = new AutonomousComponent(component,
                                                                  lockClient,
                                                                  eventClient,
