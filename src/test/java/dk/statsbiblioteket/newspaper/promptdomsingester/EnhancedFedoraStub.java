@@ -11,7 +11,6 @@ import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelat
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.ObjectProfile;
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.SearchResult;
 import dk.statsbiblioteket.doms.central.connectors.fedora.templates.ObjectIsWrongTypeException;
-import org.apache.commons.collections.iterators.ArrayIterator;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
@@ -112,6 +111,14 @@ public class EnhancedFedoraStub implements EnhancedFedora {
 
     @Override
     public String getXMLDatastreamContents(String pid, String datastream, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public String getXMLDatastreamContents(String pid, String datastream) throws
+                                                                          BackendInvalidCredsException,
+                                                                          BackendMethodFailedException,
+                                                                          BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
