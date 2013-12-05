@@ -1,29 +1,21 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
-import com.netflix.curator.framework.CuratorFramework;
-import com.netflix.curator.framework.CuratorFrameworkFactory;
-import com.netflix.curator.retry.ExponentialBackoffRetry;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClient;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClientImpl;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
-import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
-import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponent;
+import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponentUtils;
 import dk.statsbiblioteket.medieplatform.autonomous.CallResult;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.RunnableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Autonomous component for prompt ingest to DOMS. precondition: batch has been uploaded postcondition: on success,
@@ -42,45 +34,25 @@ public class PromptDomsIngesterComponent {
      *
      * @param args an array of length 1, where the first entry is a path to the properties file
      */
-    public static void main(String[] args)
-            throws
-            Exception,
-            JAXBException,
-            PIDGeneratorException {
+    public static void main(String[] args)  throws Exception {
         log.info("Entered " + PromptDomsIngesterComponent.class);
+        doMain(args);
+    }
+
+    public static int doMain(String[] args) throws Exception {
+        log.info("Starting with args {}", args);
         Properties properties = readProperties(args);
         Credentials creds = new Credentials(properties.getProperty(ConfigConstants.DOMS_USERNAME),
-                                            properties.getProperty(ConfigConstants.DOMS_PASSWORD));
+                properties.getProperty(ConfigConstants.DOMS_PASSWORD));
         String fedoraLocation = properties.getProperty(ConfigConstants.DOMS_URL);
         EnhancedFedoraImpl eFedora =
                 new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL), null);
-        File uploadDir = new File(properties.getProperty(ConfigConstants.ITERATOR_FILESYSTEM_BATCHES_FOLDER));
-        RunnableComponent component = new RunnablePromptDomsIngester(properties,eFedora);
-        CuratorFramework lockClient = CuratorFrameworkFactory
-                .newClient(properties.getProperty(ConfigConstants.AUTONOMOUS_LOCKSERVER_URL), new ExponentialBackoffRetry(1000, 3));
-        lockClient.start();
-        BatchEventClient eventClient = createEventClient(properties);
-        List<String> priorEvents = new ArrayList<>();
-        List<String> priorEventsExclude = new ArrayList<>();
-        List<String> futureEvents = new ArrayList<>();
-        String pastEventsProperty = properties.getProperty(ConfigConstants.AUTONOMOUS_PAST_SUCCESSFUL_EVENTS);
-        if (pastEventsProperty != null) {
-            for (String property: pastEventsProperty.split(",")) {
-                priorEvents.add(property);
-            }
-        }
-        futureEvents.add(component.getEventID());
-        int maxThreads = Integer.parseInt(properties.getProperty(ConfigConstants.AUTONOMOUS_MAXTHREADS, "1"));
-        AutonomousComponent autonomous = new AutonomousComponent(component,
-                                                                 lockClient,
-                                                                 eventClient,
-                                                                 maxThreads,
-                                                                 priorEvents,
-                                                                 priorEventsExclude,
-                                                                 futureEvents);
-        CallResult result = autonomous.call();
-        System.out.println(result);
-        System.exit(result.containsFailures());
+        RunnableComponent component = new RunnablePromptDomsIngester(properties, eFedora);
+
+        CallResult result = AutonomousComponentUtils.startAutonomousComponent(properties, component);
+        System.out.println("result was: " + result);
+        return result.containsFailures();
+
     }
 
     /**
