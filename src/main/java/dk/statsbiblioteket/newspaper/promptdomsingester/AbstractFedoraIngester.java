@@ -59,12 +59,12 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
     protected abstract List<String> getCollections();
 
     /**
-     * The logic of this method it that it maintains two stacks in parallel to tell it exactly where it is in the
-     * directory hierarchy. pathElementStack is simply a stack of directory names and pidStack is a stack of the
-     * corresponding DOMS pids. These stacks are pushed for each NodeBegin event and popped for each NodeEnd event.
-     * Thus Attributes (ie metadata files) are always ingested as datastreams to the object currently at the top of the
-     * stack. The pidStack tells us which object to modify, the pathElementStack tells us how to label the
-     * modifications.
+     * The logic of this method it that it maintains a stack (pidStack) to tell it exactly where it is in the
+     * directory hierarchy.
+     * It also maintains a map from pid to child-pids. When a node begins event is encountered, a new object is created
+     * and the pid of this object is added to the list of children of the head of the pid stack.
+     * When a node ends event is encountered, the corresponding pid is taken from the map, and relations are created
+     * to all the children
      *
      * @param iterator the iterator to parse from
      *
