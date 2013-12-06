@@ -10,6 +10,7 @@ import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelat
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
+import dk.statsbiblioteket.newspaper.TestConstants;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -44,7 +45,7 @@ public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest
     }
 
     public void cleanupFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        String label = "path:B400022028242-RT1";
+        String label = TestConstants.TEST_BATCH_PATH;
         RecursiveFedoraCleaner.cleanFedora(getEnhancedFedora(), label, true);
     }
 
@@ -67,13 +68,12 @@ public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest
     public void testIngest() throws Exception {
         super.testIngest();
         String pid = super.pid;
-        String foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028242-RT1").get(0);
+        String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
-        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028242-RT1/400022028241-1").get(0);
+        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1").get(0);
         List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(pid, hasPartRelation, new Date().getTime());
         assertEquals(2, relations.size());
-        //assert that B400022028242-RT1/400022028242-14/1795-06-15-01/AdresseContoirsEfterretninger-1795-06-15-01-0011B exists and has an "alto" datastream
-        foundPid = getEnhancedFedora().findObjectFromDCIdentifier("path:B400022028242-RT1/400022028241-1/1795-06-13-01/adresseavisen1759-1795-06-13-01-0007B").get(0);
+        foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1/1795-06-13-01/adresseavisen1759-1795-06-13-01-0007B").get(0);
         String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
     }

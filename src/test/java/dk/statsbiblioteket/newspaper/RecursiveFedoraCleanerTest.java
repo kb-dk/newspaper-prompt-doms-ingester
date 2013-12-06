@@ -23,7 +23,7 @@ public class RecursiveFedoraCleanerTest {
     @Test(groups = "integrationTest")
     public void testCleanFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         EnhancedFedora fedora = (new SimpleFedoraIngesterTestIT()).getEnhancedFedora();
-        String label = "path:B400022028242-RT1";
+        String label = TestConstants.TEST_BATCH_PATH;
         RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
 

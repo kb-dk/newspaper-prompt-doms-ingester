@@ -3,6 +3,7 @@ package dk.statsbiblioteket.newspaper.promptdomsingester;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.filesystem.transforming.TransformingIteratorForFileSystems;
+import dk.statsbiblioteket.newspaper.TestConstants;
 import dk.statsbiblioteket.util.Files;
 import org.testng.annotations.Test;
 
@@ -37,7 +38,7 @@ public abstract class AbstractSimpleFedoraIngesterTest {
         SimpleFedoraIngester ingester = SimpleFedoraIngester.getNewspaperInstance(getEnhancedFedora());
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");
-        File testRoot = new File(System.getProperty("user.dir")+"/target/temp/", "B400022028242-RT1");
+        File testRoot = new File(System.getProperty("user.dir")+"/target/temp/", TestConstants.TEST_BATCH_ID);
 
         if (testRoot.isDirectory()) {
             Files.delete(testRoot);
