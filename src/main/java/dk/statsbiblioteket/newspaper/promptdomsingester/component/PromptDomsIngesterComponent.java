@@ -1,11 +1,5 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
-
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClient;
 import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClientImpl;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
@@ -16,6 +10,12 @@ import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.RunnableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Autonomous component for prompt ingest to DOMS. precondition: batch has been uploaded postcondition: on success,
@@ -50,7 +50,7 @@ public class PromptDomsIngesterComponent {
         RunnableComponent component = new RunnablePromptDomsIngester(properties, eFedora);
 
         CallResult result = AutonomousComponentUtils.startAutonomousComponent(properties, component);
-        System.out.println("result was: " + result);
+        log.info("result was: " + result);
         return result.containsFailures();
 
     }
