@@ -7,7 +7,6 @@ import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.AttributeParsingEvent;
-import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.DataFileNodeBeginsParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeBeginsParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeEndParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.ParsingEvent;
@@ -176,11 +175,13 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
             log.debug(comment);
 
+/*
             if (children.getLeft() instanceof DataFileNodeBeginsParsingEvent) {
                 comment = "Added relationship " + currentNodePid + " hasFile ";
                 fedora.addRelations(currentNodePid, null, hasFileRelation, children.getRight(), false, comment);
                 log.debug(comment);
             }
+*/
 
         }
 
