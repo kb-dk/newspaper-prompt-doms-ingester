@@ -36,9 +36,20 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
      * @param fedora the fedora in which to ingest.
      * @return the ingester.
      */
+    @Deprecated
     public static SimpleFedoraIngester getNewspaperInstance(EnhancedFedora fedora) {
         return new SimpleFedoraIngester(fedora, new String[]{"info:Batch"});
     }
+
+    /**
+     * A factory method to return an ingester
+     * @param fedora the fedora in which to ingest.
+     * @return the ingester.
+     */
+    public static SimpleFedoraIngester getNewspaperInstance(EnhancedFedora fedora, String[] collections) {
+        return new SimpleFedoraIngester(fedora, collections);
+    }
+
 
     @Override
     public EnhancedFedora getEnhancedFedora() {

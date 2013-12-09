@@ -1,14 +1,15 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
-import java.util.Properties;
-
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.medieplatform.autonomous.AbstractRunnableComponent;
 import dk.statsbiblioteket.medieplatform.autonomous.Batch;
+import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.ResultCollector;
 import dk.statsbiblioteket.newspaper.promptdomsingester.IngesterInterface;
 import dk.statsbiblioteket.newspaper.promptdomsingester.SimpleFedoraIngester;
 import dk.statsbiblioteket.util.Strings;
+
+import java.util.Properties;
 
 /**
  * The runnable component for the PromptDomsIngester
@@ -30,7 +31,8 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
     @Override
     public void doWorkOnBatch(Batch batch,
                               ResultCollector resultCollector) {
-        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora);
+        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora,new String[]{getProperties().getProperty(
+                ConfigConstants.DOMS_COLLECTION,"doms:Newspaper_Collection")});
         try {
             ingester.ingest(createIterator(batch));
         } catch (Exception e) {
