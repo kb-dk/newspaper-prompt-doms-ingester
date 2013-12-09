@@ -34,6 +34,11 @@
     </scm>
 
     <dependencies>
+        <dependency>
+            <groupId>dk.statsbiblioteket.doms.central</groupId>
+            <artifactId>centralWebservice-lib</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>dk.statsbiblioteket.sbutil</groupId>
