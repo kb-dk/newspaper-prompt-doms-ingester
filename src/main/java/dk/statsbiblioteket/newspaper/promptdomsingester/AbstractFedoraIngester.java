@@ -122,8 +122,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                                                               BackendInvalidCredsException,
                                                               BackendMethodFailedException,
                                                               BackendInvalidResourceException {
-        if (event.getName()
-                 .endsWith("/contents")) {
+        if (event.getName().endsWith("/contents")) {
             //Possibly check that you are in a DataFileDir before ignoring the event?
             log.debug("Skipping contents attribute.");
         } else {
@@ -141,8 +140,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             }
             String checksum = null;
             try {
-                checksum = event.getChecksum()
-                                .toLowerCase();
+                checksum = event.getChecksum().toLowerCase();
             } catch (IOException e) {
                 throw new DomsIngesterException(e);
             }
@@ -174,19 +172,16 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         String currentNodePid = pidStack.removeFirst();
         if (currentNodePid != null) {
             Pair<NodeBeginsParsingEvent, List<String>> children = childOf.remove(currentNodePid);
+            String comment = "Added relationship " + currentNodePid + " hasPart ";
+            fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
+            log.debug(comment);
 
-            for (String childPid : children.getRight()) {
-
-                String comment = "Added relationship " + currentNodePid + " hasPart " + childPid;
-                fedora.addRelation(currentNodePid, null, hasPartRelation, childPid, false, comment);
+            if (children.getLeft() instanceof DataFileNodeBeginsParsingEvent) {
+                comment = "Added relationship " + currentNodePid + " hasFile ";
+                fedora.addRelations(currentNodePid, null, hasFileRelation, children.getRight(), false, comment);
                 log.debug(comment);
-
-                if (children.getLeft() instanceof DataFileNodeBeginsParsingEvent) {
-                    comment = "Added relationship " + currentNodePid + " hasFile " + childPid;
-                    fedora.addRelation(currentNodePid, null, hasFileRelation, childPid, false, comment);
-                    log.debug(comment);
-                }
             }
+
         }
 
 
@@ -217,9 +212,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         childOf.put(currentNodePid, new Pair<NodeBeginsParsingEvent, List<String>>(event, new ArrayList<String>()));
 
         if (parentPid != null) {
-            childOf.get(parentPid)
-                   .getRight()
-                   .add(currentNodePid);
+            childOf.get(parentPid).getRight().add(currentNodePid);
         }
 
         return rootPid;

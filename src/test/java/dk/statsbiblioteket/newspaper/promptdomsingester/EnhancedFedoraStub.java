@@ -148,6 +148,15 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
+    public void addRelations(String pid, String subject, String predicate, List<String> objects, boolean literal,
+                             String comment) throws
+                                             BackendInvalidCredsException,
+                                             BackendMethodFailedException,
+                                             BackendInvalidResourceException {
+        relationshipsAdded+=objects.size();
+    }
+
+    @Override
     public List<FedoraRelation> getNamedRelations(String pid, String predicate, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
