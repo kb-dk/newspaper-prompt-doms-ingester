@@ -4,6 +4,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
 import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
+import dk.statsbiblioteket.doms.central.connectors.fedora.ChecksumType;
 import dk.statsbiblioteket.doms.central.connectors.fedora.linkpatterns.LinkPattern;
 import dk.statsbiblioteket.doms.central.connectors.fedora.methods.generated.Method;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
@@ -14,6 +15,7 @@ import dk.statsbiblioteket.doms.central.connectors.fedora.templates.ObjectIsWron
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -89,6 +91,16 @@ public class EnhancedFedoraStub implements EnhancedFedora {
 
     @Override
     public void modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings, String s5) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+        datastreamsModified++;
+    }
+
+    @Override
+    public void modifyDatastreamByValue(String s, String s2, ChecksumType checksumType, String s3, byte[] bytes,
+                                        List<String> strings, String s4, Long aLong) throws
+                                                                                     BackendMethodFailedException,
+                                                                                     BackendInvalidCredsException,
+                                                                                     BackendInvalidResourceException,
+                                                                                     ConcurrentModificationException {
         datastreamsModified++;
     }
 
