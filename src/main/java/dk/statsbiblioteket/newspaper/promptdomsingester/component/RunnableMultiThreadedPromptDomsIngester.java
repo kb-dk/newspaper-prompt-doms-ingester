@@ -3,6 +3,7 @@ package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.medieplatform.autonomous.AbstractRunnableComponent;
 import dk.statsbiblioteket.medieplatform.autonomous.Batch;
+import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.ResultCollector;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
 import dk.statsbiblioteket.newspaper.promptdomsingester.MultiThreadedFedoraIngester;
@@ -10,14 +11,12 @@ import dk.statsbiblioteket.util.Strings;
 
 import java.util.Properties;
 
-public class RunnableMultiThreadedPromptDomsIngester extends AbstractRunnableComponent{
+public class RunnableMultiThreadedPromptDomsIngester extends AbstractRunnableComponent {
 
-   private final EnhancedFedora eFedora;
+    private final EnhancedFedora eFedora;
     private int concurrency;
 
-    public RunnableMultiThreadedPromptDomsIngester(Properties properties,
-                                      EnhancedFedora eFedora,
-                                      int concurrency) {
+    public RunnableMultiThreadedPromptDomsIngester(Properties properties, EnhancedFedora eFedora, int concurrency) {
         super(properties);
         this.eFedora = eFedora;
         this.concurrency = concurrency;
@@ -29,10 +28,12 @@ public class RunnableMultiThreadedPromptDomsIngester extends AbstractRunnableCom
     }
 
     @Override
-    public void doWorkOnBatch(Batch batch,
-                              ResultCollector resultCollector) {
+    public void doWorkOnBatch(Batch batch, ResultCollector resultCollector) {
         TreeIterator iterator = createIterator(batch);
-        MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(eFedora);
+        MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(
+                eFedora,
+                new String[]{
+                        getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")});
         try {
             ingester.ingest(iterator);
         } catch (Exception e) {

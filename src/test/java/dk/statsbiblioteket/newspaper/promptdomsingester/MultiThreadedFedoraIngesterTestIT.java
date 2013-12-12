@@ -65,7 +65,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
 
     @Test(groups = "integrationTest")
     public void testIngest() throws Exception {
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora()));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(),new String[0]));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);

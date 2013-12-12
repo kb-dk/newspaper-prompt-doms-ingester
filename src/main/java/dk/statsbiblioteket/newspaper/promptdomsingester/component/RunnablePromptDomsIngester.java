@@ -31,7 +31,8 @@ public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
     @Override
     public void doWorkOnBatch(Batch batch,
                               ResultCollector resultCollector) {
-        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora,new String[]{getProperties().getProperty(
+        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora,
+                new String[]{getProperties().getProperty(
                 ConfigConstants.DOMS_COLLECTION,"doms:Newspaper_Collection")});
         try {
             ingester.ingest(createIterator(batch));
