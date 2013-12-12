@@ -5,7 +5,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceExcepti
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
-import dk.statsbiblioteket.newspaper.promptdomsingester.SimpleFedoraIngesterTestIT;
+import dk.statsbiblioteket.newspaper.promptdomsingester.FedoraIngesterTestIT;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
@@ -22,7 +22,7 @@ public class RecursiveFedoraCleanerTest {
 
     @Test(groups = "integrationTest")
     public void testCleanFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        EnhancedFedora fedora = (new SimpleFedoraIngesterTestIT()).getEnhancedFedora();
+        EnhancedFedora fedora = (new FedoraIngesterTestIT()).getEnhancedFedora();
         String label = TestConstants.TEST_BATCH_PATH;
         RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
@@ -31,12 +31,12 @@ public class RecursiveFedoraCleanerTest {
 
 
     public void testCleanFedoraWildcard() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
-        EnhancedFedora fedora = (new SimpleFedoraIngesterTestIT()).getEnhancedFedora();
-        String foundPid = new SimpleFedoraIngesterTestIT().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
+        EnhancedFedora fedora = (new FedoraIngesterTestIT()).getEnhancedFedora();
+        String foundPid = new FedoraIngesterTestIT().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
         while (foundPid != null) {
             System.out.println("Deleting object " + foundPid);
             RecursiveFedoraCleaner.deleteSingleObject(fedora, foundPid);
-            foundPid = new SimpleFedoraIngesterTestIT().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
+            foundPid = new FedoraIngesterTestIT().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
         }
     }
 

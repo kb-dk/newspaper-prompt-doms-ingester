@@ -1,7 +1,5 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
-import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClient;
-import dk.statsbibliokeket.newspaper.batcheventFramework.BatchEventClientImpl;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponentUtils;
@@ -47,8 +45,8 @@ public class PromptDomsIngesterComponent {
         String fedoraLocation = properties.getProperty(ConfigConstants.DOMS_URL);
         EnhancedFedoraImpl eFedora =
                 new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL), null);
-        RunnableComponent component = new RunnablePromptDomsIngester(properties, eFedora);
 
+        RunnableComponent component = new RunnableMultiThreadedPromptDomsIngester(properties,eFedora,4);
         CallResult result = AutonomousComponentUtils.startAutonomousComponent(properties, component);
         log.info("result was: " + result);
         return result.containsFailures();
@@ -89,19 +87,6 @@ public class PromptDomsIngesterComponent {
         properties.load(new FileReader(propsFile));
         checkProperties(properties, requiredProperties);
         return properties;
-    }
-
-    /**
-     * Create a batch event client from the properties
-     * @param properties the properties
-     * @return an initialised batch event client
-     */
-    private static BatchEventClient createEventClient(Properties properties) {
-        return new BatchEventClientImpl(properties.getProperty(ConfigConstants.AUTONOMOUS_SBOI_URL),
-                                        properties.getProperty(ConfigConstants.DOMS_URL),
-                                        properties.getProperty(ConfigConstants.DOMS_USERNAME),
-                                        properties.getProperty(ConfigConstants.DOMS_PASSWORD),
-                                        properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL));
     }
 
     /**

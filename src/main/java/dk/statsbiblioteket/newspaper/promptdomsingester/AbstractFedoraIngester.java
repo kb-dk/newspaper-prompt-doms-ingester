@@ -82,7 +82,8 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
 
         Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf = new HashMap<>();
 
-        boolean checkExistence = true;
+
+
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();

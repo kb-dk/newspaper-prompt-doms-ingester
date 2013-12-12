@@ -5,7 +5,6 @@ import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGenera
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.filesystem.transforming.TransformingIteratorForFileSystems;
 import dk.statsbiblioteket.newspaper.TestConstants;
 import dk.statsbiblioteket.util.Files;
-import org.testng.annotations.Test;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -17,7 +16,7 @@ import static org.testng.Assert.assertTrue;
 /**
  *
  */
-public abstract class AbstractSimpleFedoraIngesterTest {
+public abstract class AbstractFedoraIngesterTest {
 
     String pid;
 
@@ -32,10 +31,8 @@ public abstract class AbstractSimpleFedoraIngesterTest {
      *
      * @throws Exception
      */
-    @Test
-    public void testIngest() throws Exception {
-        //SimpleFedoraIngester ingester = new SimpleFedoraIngester(getEnhancedFedora(), new String[]{".jp2"}, new String[]{"info:Batch"});
-        SimpleFedoraIngester ingester = SimpleFedoraIngester.getNewspaperInstance(getEnhancedFedora());
+    public void testIngest(IngesterInterface ingester) throws Exception {
+
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");
         File testRoot = new File(System.getProperty("user.dir")+"/target/temp/", TestConstants.TEST_BATCH_ID);

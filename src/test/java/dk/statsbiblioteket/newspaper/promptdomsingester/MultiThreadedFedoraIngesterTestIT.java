@@ -30,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 /**
  *
  */
-public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest {
+public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTest {
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
 
 
@@ -64,9 +64,8 @@ public class SimpleFedoraIngesterTestIT extends AbstractSimpleFedoraIngesterTest
     }
 
     @Test(groups = "integrationTest")
-    @Override
     public void testIngest() throws Exception {
-        super.testIngest();
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora()));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);

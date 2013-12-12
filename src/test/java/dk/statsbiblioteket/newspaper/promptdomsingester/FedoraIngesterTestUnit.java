@@ -12,7 +12,7 @@ import java.util.List;
 /**
  *
  */
-public class SimpleFedoraIngesterTestUnit extends AbstractSimpleFedoraIngesterTest {
+public class FedoraIngesterTestUnit extends AbstractFedoraIngesterTest {
 
     EnhancedFedoraStub fedora = null;
 
@@ -29,9 +29,8 @@ public class SimpleFedoraIngesterTestUnit extends AbstractSimpleFedoraIngesterTe
     }
 
     @Test
-    @Override
     public void testIngest() throws Exception {
-        super.testIngest();
+        super.testIngest(new SimpleFedoraIngester(getEnhancedFedora(),null));
         System.out.println("Created " + fedora.objectsCreated + " objects.");
         System.out.println("Modified " + fedora.datastreamsModified + " datastreams.");
         System.out.println(fedora.toString());
