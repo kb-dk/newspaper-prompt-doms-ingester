@@ -110,7 +110,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
             childRealPids.add(childPid.join());
         }
         String comment
-                = "Added relationship " + myPid + " hasPart '" + Arrays.deepToString(childRealPids.toArray()) + "'";
+                = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
         fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
         log.debug("{}, " + comment, myPid);
 
