@@ -11,15 +11,29 @@ import dk.statsbiblioteket.util.Strings;
 
 import java.util.Properties;
 
+/**
+ * This is the multithreaded doms ingester
+ */
 public class RunnableMultiThreadedPromptDomsIngester extends AbstractRunnableComponent {
 
     private final EnhancedFedora eFedora;
-    private int concurrency;
 
-    public RunnableMultiThreadedPromptDomsIngester(Properties properties, EnhancedFedora eFedora, int concurrency) {
+    /**
+     * Constructur
+     * @param properties
+     * @param eFedora
+     */
+    public RunnableMultiThreadedPromptDomsIngester(Properties properties, EnhancedFedora eFedora) {
         super(properties);
         this.eFedora = eFedora;
-        this.concurrency = concurrency;
+    }
+
+    private int parseInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException|NullPointerException e){
+            return 4;
+        }
     }
 
     @Override
@@ -33,7 +47,8 @@ public class RunnableMultiThreadedPromptDomsIngester extends AbstractRunnableCom
         MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(
                 eFedora,
                 new String[]{
-                        getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")});
+                        getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")},
+                parseInt(getProperties().getProperty(ConfigConstants.THREADS_PER_BATCH)));
         try {
             ingester.ingest(iterator);
         } catch (Exception e) {

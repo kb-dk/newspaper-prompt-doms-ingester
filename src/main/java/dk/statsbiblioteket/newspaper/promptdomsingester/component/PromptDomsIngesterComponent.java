@@ -46,7 +46,7 @@ public class PromptDomsIngesterComponent {
         EnhancedFedoraImpl eFedora =
                 new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL), null);
 
-        RunnableComponent component = new RunnableMultiThreadedPromptDomsIngester(properties,eFedora,4);
+        RunnableComponent component = new RunnableMultiThreadedPromptDomsIngester(properties,eFedora);
         CallResult result = AutonomousComponentUtils.startAutonomousComponent(properties, component);
         log.info("result was: " + result);
         return result.containsFailures();
