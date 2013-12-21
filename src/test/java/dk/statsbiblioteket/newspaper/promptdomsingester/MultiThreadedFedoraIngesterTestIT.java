@@ -72,7 +72,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
         String nextPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1").get(0);
         List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(pid, hasPartRelation, new Date().getTime());
         assertEquals(2, relations.size());
-        foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1/1795-06-13-01/adresseavisen1759-1795-06-13-01-0007B").get(0);
+        foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1/1795-06-01/adresseavisen1759-1795-06-01-0007B").get(0);
         String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
     }
