@@ -1,3 +1,10 @@
+1.2
+
+* Updated to newspaper-batch-event-framework 1.4. This version keeps the locking by:
+  - Keeping the component lock for the entire duration of the process
+  - Double checks in doms if batches are ready for work. 
+* Updated the component to handle partial dates, which will be found in some newspapers
+
 1.1
 
 * Logback matches stage
