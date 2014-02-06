@@ -1,3 +1,6 @@
+1.2.2
+* Update to newspaper-batch-event-framework 1.4.4, to make the component respect a maximum of reported failures
+
 1.2.1
 * Update to newspaper-batch-event-framework 1.4.2, which makes the component stop talking on stderr
 
