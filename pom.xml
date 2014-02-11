@@ -164,6 +164,106 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>dk.statsbiblioteket.doms.installer</groupId>
+                                    <artifactId>installer</artifactId>
+                                    <version>1.3-SNAPSHOT</version>
+                                    <type>tar.gz</type>
+                                    <classifier>installer</classifier>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/integrationTests/</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>${project.build.directory}/integrationTests/installer-*/bin/small.sh ${project.build.directory}/integrationTests/doms</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <id>stop Tomcat</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <!--<executable>${project.build.directory}/integrationTests/doms/tomcat/bin/shutdown.sh</executable>-->
+
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>ps ax | grep -i '${project.build.directory}/integrationTests/doms/tomcat/' | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM; sleep 5</argument>
+                            </arguments>
+
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <id>stop redis</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>ps ax | grep -i 'redis-server' | grep -v grep | awk '{print $1}' | xargs kill -SIGTERM; sleep 5</argument>
+                            </arguments>
+
+                        </configuration>
+
+                    </execution>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <id>delete doms</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>rm -rf ${project.build.directory}/integrationTests/doms/</argument>
+                            </arguments>
+
+                        </configuration>
+
+                    </execution>
+                </executions>
+                <configuration>
+
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
