@@ -11,6 +11,8 @@ import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
 import dk.statsbiblioteket.newspaper.TestConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -32,6 +34,8 @@ import static org.testng.Assert.assertTrue;
  */
 public class FedoraIngesterTestIT extends AbstractFedoraIngesterTest {
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
 
     @BeforeMethod
@@ -59,6 +63,7 @@ public class FedoraIngesterTestIT extends AbstractFedoraIngesterTest {
         }
         Credentials creds = new Credentials(props.getProperty(ConfigConstants.DOMS_USERNAME), props.getProperty(ConfigConstants.DOMS_PASSWORD));
         String fedoraLocation = props.getProperty(ConfigConstants.DOMS_URL);
+        log.info("Connecting to fedora instance at '{}'",fedoraLocation);
         EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, fedoraLocation, props.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL) , null);
         return eFedora;
     }
