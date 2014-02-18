@@ -5,12 +5,11 @@
     <parent>
         <groupId>dk.statsbiblioteket.newspaper</groupId>
         <artifactId>newspaper-parent</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </parent>
 
     <artifactId>newspaper-prompt-doms-ingester</artifactId>
     <version>1.2.3-SNAPSHOT</version>
-
 
     <repositories>
         <repository>

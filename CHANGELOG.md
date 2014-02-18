@@ -1,3 +1,6 @@
+1.2.3
+* Updated to newspaper-parent 1.1
+
 1.2.2
 * Update to newspaper-batch-event-framework 1.4.4, to make the component respect a maximum of reported failures
 
