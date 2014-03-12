@@ -1,10 +1,10 @@
 package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
-import dk.statsbiblioteket.medieplatform.autonomous.AbstractRunnableComponent;
 import dk.statsbiblioteket.medieplatform.autonomous.Batch;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.ResultCollector;
+import dk.statsbiblioteket.medieplatform.autonomous.SBOIBasedAbstractRunnableComponent;
 import dk.statsbiblioteket.newspaper.promptdomsingester.IngesterInterface;
 import dk.statsbiblioteket.newspaper.promptdomsingester.SimpleFedoraIngester;
 import dk.statsbiblioteket.util.Strings;
@@ -14,7 +14,7 @@ import java.util.Properties;
 /**
  * The runnable component for the PromptDomsIngester
  */
-public class RunnablePromptDomsIngester extends AbstractRunnableComponent{
+public class RunnablePromptDomsIngester extends SBOIBasedAbstractRunnableComponent {
     private final EnhancedFedora eFedora;
 
     public RunnablePromptDomsIngester(Properties properties,
