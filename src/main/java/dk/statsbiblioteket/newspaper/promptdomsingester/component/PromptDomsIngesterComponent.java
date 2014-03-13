@@ -2,10 +2,11 @@ package dk.statsbiblioteket.newspaper.promptdomsingester.component;
 
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedoraImpl;
 import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
-import dk.statsbiblioteket.medieplatform.autonomous.AutonomousComponentUtils;
 import dk.statsbiblioteket.medieplatform.autonomous.CallResult;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.medieplatform.autonomous.RunnableComponent;
+import dk.statsbiblioteket.medieplatform.autonomous.SBOIDomsAutonomousComponentUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class PromptDomsIngesterComponent {
                 new EnhancedFedoraImpl(creds, fedoraLocation, properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL), null);
 
         RunnableComponent component = new RunnableMultiThreadedPromptDomsIngester(properties,eFedora);
-        CallResult result = AutonomousComponentUtils.startAutonomousComponent(properties, component);
+        CallResult result = SBOIDomsAutonomousComponentUtils.startAutonomousComponent(properties, component);
         log.info("result was: " + result);
         return result.containsFailures();
 
