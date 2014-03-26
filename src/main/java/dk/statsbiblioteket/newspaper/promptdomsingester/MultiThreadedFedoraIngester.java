@@ -32,7 +32,6 @@ import java.util.concurrent.RecursiveTask;
  * Each nodeBegin event result in a new Ingester being created. These ingesters are submittet to a threadpool.
  * In the nodeEnd event, the ingester will join any children ingesters, in order to get the PIDs for creating
  * relations.
- *
  */
 public class MultiThreadedFedoraIngester extends RecursiveTask<String> implements IngesterInterface {
 
@@ -47,6 +46,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Create a new fedora ingester
+     *
      * @param fedora
      * @param collections
      */
@@ -58,18 +58,22 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * secret constructor used by the multi threaded framework to spawn new tasks
+     *
      * @param fedora
      * @param iterator
      * @param collections
      */
-    protected MultiThreadedFedoraIngester(EnhancedFedora fedora, TreeIterator iterator,String[] collections, int concurrency) {
-        this(fedora,collections,concurrency);
+    protected MultiThreadedFedoraIngester(EnhancedFedora fedora, TreeIterator iterator, String[] collections,
+                                          int concurrency) {
+        this(fedora, collections, concurrency);
         this.iterator = iterator;
     }
 
     /**
      * Compute the datastream name from a attributename
+     *
      * @param attributeName the name from the attribute event
+     *
      * @return the datastream name
      * @throws DomsIngesterException
      */
@@ -87,38 +91,39 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
      * The attribute events (after the first node begins, before any other node begins) will create datastreams in
      * the object
      * The node end will cause the compute method to join the child tasks, and create hasPart relations to all of them
+     *
      * @return the pid of the object created
      */
     @Override
     protected String compute() {
         boolean firstEvent = true;
         try {
-        while (iterator.hasNext()) {
-            ParsingEvent event = iterator.next();
-            switch (event.getType()) {
-                case NodeBegin:
-                    if (firstEvent) {//The first node begins create this object
-                        myPid = handleNodeBegin((NodeBeginsParsingEvent) event);
-                        firstEvent = false;
-                    } else { //any further will spawn sub iterators
-                        //Skip to next sibling will branch of the iterator that began with this node begins
-                        //It will then return than iterator.
-                        //And the iterator where this was called will skip to the next node begins that was not this tree
-                        TreeIterator childIterator = iterator.skipToNextSibling();
-                        MultiThreadedFedoraIngester childIngester = new MultiThreadedFedoraIngester(
-                                fedora, childIterator,collections,concurrency);
-                        childTasks.add(childIngester.fork());
-                    }
-                    break;
-                case Attribute:
-                    handleAttribute((AttributeParsingEvent) event);
-                    break;
-                case NodeEnd:
-                    handleNodeEnd();
-                    break;
+            while (iterator.hasNext()) {
+                ParsingEvent event = iterator.next();
+                switch (event.getType()) {
+                    case NodeBegin:
+                        if (firstEvent) {//The first node begins create this object
+                            myPid = handleNodeBegin((NodeBeginsParsingEvent) event);
+                            firstEvent = false;
+                        } else { //any further will spawn sub iterators
+                            //Skip to next sibling will branch of the iterator that began with this node begins
+                            //It will then return than iterator.
+                            //And the iterator where this was called will skip to the next node begins that was not this tree
+                            TreeIterator childIterator = iterator.skipToNextSibling();
+                            MultiThreadedFedoraIngester childIngester = new MultiThreadedFedoraIngester(
+                                    fedora, childIterator, collections, concurrency);
+                            childTasks.add(childIngester.fork());
+                        }
+                        break;
+                    case Attribute:
+                        handleAttribute((AttributeParsingEvent) event);
+                        break;
+                    case NodeEnd:
+                        handleNodeEnd();
+                        break;
+                }
             }
-        }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -127,7 +132,9 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Create a new object from the event
+     *
      * @param event the node begins event
+     *
      * @return the doms pid
      * @throws BackendInvalidCredsException
      * @throws BackendMethodFailedException
@@ -136,8 +143,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
     private String handleNodeBegin(NodeBeginsParsingEvent event) throws
                                                                  BackendInvalidCredsException,
                                                                  BackendMethodFailedException,
-                                                                 PIDGeneratorException
-                                                                  {
+                                                                 PIDGeneratorException {
         String id = getDCidentifier(event);
         String currentNodePid = exists(event);
         if (currentNodePid == null) {
@@ -152,6 +158,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Wait for all the childPid tasks to complete, and then create the relations
+     *
      * @throws BackendMethodFailedException
      * @throws BackendInvalidResourceException
      * @throws BackendInvalidCredsException
@@ -164,8 +171,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
         for (ForkJoinTask<String> childPid : childTasks) {
             childRealPids.add(childPid.join());
         }
-        String comment
-                = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
+        String comment = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
         fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
         log.debug("{}, " + comment, myPid);
 
@@ -173,7 +179,9 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Create the datastream from the attribute event
+     *
      * @param event the event
+     *
      * @throws DomsIngesterException
      * @throws BackendInvalidCredsException
      * @throws BackendMethodFailedException
@@ -219,14 +227,16 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Check if the event correspond to an object that already exists
+     *
      * @param nodeBeginsParsingEvent the event to look up
+     *
      * @return the pid or null if not found
      * @throws BackendInvalidCredsException
      * @throws BackendMethodFailedException
      */
     private String exists(NodeBeginsParsingEvent nodeBeginsParsingEvent) throws
-                                                                                                BackendInvalidCredsException,
-                                                                                                BackendMethodFailedException {
+                                                                         BackendInvalidCredsException,
+                                                                         BackendMethodFailedException {
         List<String> founds = fedora.findObjectFromDCIdentifier(getDCidentifier(nodeBeginsParsingEvent));
         if (founds != null && founds.size() > 0) {
             return founds.get(0);
@@ -237,7 +247,9 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Convert the event to a dc identifier
+     *
      * @param event the event
+     *
      * @return the dc identifier
      */
     private String getDCidentifier(NodeBeginsParsingEvent event) {
@@ -256,7 +268,9 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Start the ingest procedure.
+     *
      * @param iterator the iterator to iterate on
+     *
      * @return the pid of the root object, or null of something odd failed
      */
     @Override

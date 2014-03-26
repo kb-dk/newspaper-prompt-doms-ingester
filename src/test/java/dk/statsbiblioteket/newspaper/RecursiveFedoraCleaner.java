@@ -26,11 +26,15 @@ public class RecursiveFedoraCleaner {
     /**
      * Recursively purges fedora of every object with the given label and every object reachable
      * from them via a hasPart relation. You have been warned.
+     *
      * @param fedora the fedora instance to purge.
-     * @param label the label of the root objects to be purged.
-     * @param doit if false, just print information on the objects that would be deleted.
+     * @param label  the label of the root objects to be purged.
+     * @param doit   if false, just print information on the objects that would be deleted.
      */
-    public static void cleanFedora(EnhancedFedora fedora, String label, boolean doit) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public static void cleanFedora(EnhancedFedora fedora, String label, boolean doit) throws
+                                                                                      BackendInvalidCredsException,
+                                                                                      BackendMethodFailedException,
+                                                                                      BackendInvalidResourceException {
         List<String> pids = fedora.findObjectFromDCIdentifier(label);
         if (pids.isEmpty()) {
             log.info("Nothing to delete with label " + label);
@@ -39,14 +43,17 @@ public class RecursiveFedoraCleaner {
         log.info("About to delete " + pids.size() + " objects tree.");
         //The while loop is necessary because the findObjectFromDCIdentifier() has maxResults=1 set.
         while (!pids.isEmpty()) {
-            for (String pid: pids) {
+            for (String pid : pids) {
                 purgeObject(fedora, pid, doit);
             }
             pids = fedora.findObjectFromDCIdentifier(label);
         }
     }
 
-    private static void purgeObject(EnhancedFedora fedora, String pid, boolean doit) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    private static void purgeObject(EnhancedFedora fedora, String pid, boolean doit) throws
+                                                                                     BackendInvalidCredsException,
+                                                                                     BackendMethodFailedException,
+                                                                                     BackendInvalidResourceException {
         List<FedoraRelation> relations = fedora.getNamedRelations(pid, hasPartRelation, new Date().getTime());
         log.info("About to delete object '" + pid + "'");
         if (doit) {
@@ -58,7 +65,7 @@ public class RecursiveFedoraCleaner {
         } else {
             log.info("Didn't actually delete object '" + pid + "'");
         }
-        for (FedoraRelation relation: relations) {
+        for (FedoraRelation relation : relations) {
             String nextPid = relation.getObject();
             if (!pid.equals(nextPid)) {
                 purgeObject(fedora, nextPid, doit);
@@ -66,7 +73,10 @@ public class RecursiveFedoraCleaner {
         }
     }
 
-    public static void deleteSingleObject(EnhancedFedora fedora, String pid) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public static void deleteSingleObject(EnhancedFedora fedora, String pid) throws
+                                                                             BackendInvalidCredsException,
+                                                                             BackendMethodFailedException,
+                                                                             BackendInvalidResourceException {
         fedora.deleteObject(pid, "Deleted in integration test");
     }
 

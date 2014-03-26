@@ -35,16 +35,34 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
 
 
     @BeforeMethod
-    public void setup() throws MalformedURLException, JAXBException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException, PIDGeneratorException {
+    public void setup() throws
+                        MalformedURLException,
+                        JAXBException,
+                        BackendInvalidCredsException,
+                        BackendMethodFailedException,
+                        BackendInvalidResourceException,
+                        PIDGeneratorException {
         cleanupFedora();
     }
 
     @AfterMethod
-    public void teardown() throws MalformedURLException, JAXBException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException, PIDGeneratorException {
-         cleanupFedora();
+    public void teardown() throws
+                           MalformedURLException,
+                           JAXBException,
+                           BackendInvalidCredsException,
+                           BackendMethodFailedException,
+                           BackendInvalidResourceException,
+                           PIDGeneratorException {
+        cleanupFedora();
     }
 
-    public void cleanupFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void cleanupFedora() throws
+                                MalformedURLException,
+                                JAXBException,
+                                PIDGeneratorException,
+                                BackendInvalidCredsException,
+                                BackendMethodFailedException,
+                                BackendInvalidResourceException {
         String label = TestConstants.TEST_BATCH_PATH;
         RecursiveFedoraCleaner.cleanFedora(getEnhancedFedora(), label, true);
     }
@@ -57,23 +75,36 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Credentials creds = new Credentials(props.getProperty(ConfigConstants.DOMS_USERNAME), props.getProperty(ConfigConstants.DOMS_PASSWORD));
+        Credentials creds = new Credentials(
+                props.getProperty(ConfigConstants.DOMS_USERNAME),
+                props.getProperty(ConfigConstants.DOMS_PASSWORD));
         String fedoraLocation = props.getProperty(ConfigConstants.DOMS_URL);
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, fedoraLocation, props.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL) , null);
+        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(
+                creds,
+                fedoraLocation,
+                props.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL),
+                null);
         return eFedora;
     }
 
     @Test(groups = "integrationTest")
     public void testIngest() throws Exception {
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(),new String[0],8));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
-        String nextPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1").get(0);
-        List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(pid, hasPartRelation, new Date().getTime());
+        String nextPid
+                = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH + "/400022028241-1")
+                                     .get(0);
+        List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(
+                pid,
+                hasPartRelation,
+                new Date().getTime());
         assertEquals(2, relations.size());
-        foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH+"/400022028241-1/1795-06-01/adresseavisen1759-1795-06-01-0007B").get(0);
-        String altoStream =  getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
+        foundPid
+                = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH + "/400022028241-1/1795-06-01/adresseavisen1759-1795-06-01-0007B")
+                                     .get(0);
+        String altoStream = getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
     }
 }

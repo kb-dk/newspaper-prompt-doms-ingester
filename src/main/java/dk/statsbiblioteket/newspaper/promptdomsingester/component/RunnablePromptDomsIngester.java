@@ -17,8 +17,7 @@ import java.util.Properties;
 public class RunnablePromptDomsIngester extends TreeProcessorAbstractRunnableComponent {
     private final EnhancedFedora eFedora;
 
-    public RunnablePromptDomsIngester(Properties properties,
-                                      EnhancedFedora eFedora) {
+    public RunnablePromptDomsIngester(Properties properties, EnhancedFedora eFedora) {
         super(properties);
         this.eFedora = eFedora;
     }
@@ -29,19 +28,20 @@ public class RunnablePromptDomsIngester extends TreeProcessorAbstractRunnableCom
     }
 
     @Override
-    public void doWorkOnBatch(Batch batch,
-                              ResultCollector resultCollector) {
-        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(eFedora,
-                new String[]{getProperties().getProperty(
-                ConfigConstants.DOMS_COLLECTION,"doms:Newspaper_Collection")});
+    public void doWorkOnBatch(Batch batch, ResultCollector resultCollector) {
+        IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(
+                eFedora, new String[]{getProperties().getProperty(
+                        ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")}
+                                                                              );
         try {
             ingester.ingest(createIterator(batch));
         } catch (Exception e) {
-            resultCollector.addFailure(batch.getFullID(),
-                                       "exception",
-                                       e.getClass().getSimpleName(),
-                                       "Exception during ingest: " + e.toString(),
-                                       Strings.getStackTrace(e));
+            resultCollector.addFailure(
+                    batch.getFullID(),
+                    "exception",
+                    e.getClass().getSimpleName(),
+                    "Exception during ingest: " + e.toString(),
+                    Strings.getStackTrace(e));
         }
     }
 

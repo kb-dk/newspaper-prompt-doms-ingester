@@ -44,12 +44,20 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public String cloneTemplate(String templatepid, List<String> oldIDs, String logMessage) throws BackendInvalidCredsException, BackendMethodFailedException, ObjectIsWrongTypeException, BackendInvalidResourceException, PIDGeneratorException {
+    public String cloneTemplate(String templatepid, List<String> oldIDs, String logMessage) throws
+                                                                                            BackendInvalidCredsException,
+                                                                                            BackendMethodFailedException,
+                                                                                            ObjectIsWrongTypeException,
+                                                                                            BackendInvalidResourceException,
+                                                                                            PIDGeneratorException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public String newEmptyObject(List<String> oldIDs, List<String> collections, String logMessage) throws BackendInvalidCredsException, BackendMethodFailedException, PIDGeneratorException {
+    public String newEmptyObject(List<String> oldIDs, List<String> collections, String logMessage) throws
+                                                                                                   BackendInvalidCredsException,
+                                                                                                   BackendMethodFailedException,
+                                                                                                   PIDGeneratorException {
         objectsCreated++;
         String pid = UUID.randomUUID().toString();
         if (!oldIDs.isEmpty()) {
@@ -61,37 +69,60 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public ObjectProfile getObjectProfile(String pid, Long asOfTime) throws BackendMethodFailedException, BackendInvalidCredsException, BackendInvalidResourceException {
+    public ObjectProfile getObjectProfile(String pid, Long asOfTime) throws
+                                                                     BackendMethodFailedException,
+                                                                     BackendInvalidCredsException,
+                                                                     BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void modifyObjectLabel(String pid, String name, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void modifyObjectLabel(String pid, String name, String comment) throws
+                                                                           BackendInvalidCredsException,
+                                                                           BackendMethodFailedException,
+                                                                           BackendInvalidResourceException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void modifyObjectState(String pid, String stateDeleted, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void modifyObjectState(String pid, String stateDeleted, String comment) throws
+                                                                                   BackendInvalidCredsException,
+                                                                                   BackendMethodFailedException,
+                                                                                   BackendInvalidResourceException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void deleteObject(String s, String s1) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void deleteObject(String s, String s1) throws
+                                                  BackendInvalidCredsException,
+                                                  BackendMethodFailedException,
+                                                  BackendInvalidResourceException {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, List<String> strings, String s3) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void modifyDatastreamByValue(String s, String s1, String s2, List<String> strings, String s3) throws
+                                                                                                         BackendInvalidCredsException,
+                                                                                                         BackendMethodFailedException,
+                                                                                                         BackendInvalidResourceException {
         datastreamsModified++;
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, List<String> strings, String s4) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, List<String> strings,
+                                        String s4) throws
+                                                   BackendInvalidCredsException,
+                                                   BackendMethodFailedException,
+                                                   BackendInvalidResourceException {
         datastreamsModified++;
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings, String s5) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings,
+                                        String s5) throws
+                                                   BackendInvalidCredsException,
+                                                   BackendMethodFailedException,
+                                                   BackendInvalidResourceException {
         datastreamsModified++;
     }
 
@@ -117,7 +148,10 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void deleteDatastream(String s, String s1, String s2) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void deleteDatastream(String s, String s1, String s2) throws
+                                                                 BackendInvalidCredsException,
+                                                                 BackendMethodFailedException,
+                                                                 BackendInvalidResourceException {
         throw new RuntimeException("not implemented");
     }
 
@@ -134,7 +168,10 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public String getXMLDatastreamContents(String pid, String datastream, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public String getXMLDatastreamContents(String pid, String datastream, Long asOfTime) throws
+                                                                                         BackendInvalidCredsException,
+                                                                                         BackendMethodFailedException,
+                                                                                         BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -147,27 +184,45 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, List<String> strings, String s6) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5,
+                                      List<String> strings, String s6) throws
+                                                                       BackendInvalidCredsException,
+                                                                       BackendMethodFailedException,
+                                                                       BackendInvalidResourceException {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6, String s7, List<String> strings, String s8) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
+                                      String s7, List<String> strings, String s8) throws
+                                                                                  BackendInvalidCredsException,
+                                                                                  BackendMethodFailedException,
+                                                                                  BackendInvalidResourceException {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6, List<String> strings, String s7) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
+                                      List<String> strings, String s7) throws
+                                                                       BackendInvalidCredsException,
+                                                                       BackendMethodFailedException,
+                                                                       BackendInvalidResourceException {
         throw new RuntimeException("not implemented");
     }
 
     @Override
-    public List<String> listObjectsWithThisLabel(String label) throws BackendInvalidCredsException, BackendMethodFailedException {
+    public List<String> listObjectsWithThisLabel(String label) throws
+                                                               BackendInvalidCredsException,
+                                                               BackendMethodFailedException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void addRelation(String pid, String subject, String predicate, String object, boolean literal, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void addRelation(String pid, String subject, String predicate, String object, boolean literal,
+                            String comment) throws
+                                            BackendInvalidCredsException,
+                                            BackendMethodFailedException,
+                                            BackendInvalidResourceException {
         relationshipsAdded++;
     }
 
@@ -177,36 +232,53 @@ public class EnhancedFedoraStub implements EnhancedFedora {
                                              BackendInvalidCredsException,
                                              BackendMethodFailedException,
                                              BackendInvalidResourceException {
-        relationshipsAdded+=objects.size();
+        relationshipsAdded += objects.size();
     }
 
     @Override
-    public List<FedoraRelation> getNamedRelations(String pid, String predicate, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public List<FedoraRelation> getNamedRelations(String pid, String predicate, Long asOfTime) throws
+                                                                                               BackendInvalidCredsException,
+                                                                                               BackendMethodFailedException,
+                                                                                               BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<FedoraRelation> getInverseRelations(String pid, String predicate) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public List<FedoraRelation> getInverseRelations(String pid, String predicate) throws
+                                                                                  BackendInvalidCredsException,
+                                                                                  BackendMethodFailedException,
+                                                                                  BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void deleteRelation(String pid, String subject, String predicate, String object, boolean literal, String comment) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void deleteRelation(String pid, String subject, String predicate, String object, boolean literal,
+                               String comment) throws
+                                               BackendInvalidCredsException,
+                                               BackendMethodFailedException,
+                                               BackendInvalidResourceException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public Document createBundle(String pid, String viewAngle, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public Document createBundle(String pid, String viewAngle, Long asOfTime) throws
+                                                                              BackendInvalidCredsException,
+                                                                              BackendMethodFailedException,
+                                                                              BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<String> findObjectFromDCIdentifier(String string) throws BackendInvalidCredsException, BackendMethodFailedException {
+    public List<String> findObjectFromDCIdentifier(String string) throws
+                                                                  BackendInvalidCredsException,
+                                                                  BackendMethodFailedException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<SearchResult> fieldsearch(String query, int offset, int pageSize) throws BackendInvalidCredsException, BackendMethodFailedException {
+    public List<SearchResult> fieldsearch(String query, int offset, int pageSize) throws
+                                                                                  BackendInvalidCredsException,
+                                                                                  BackendMethodFailedException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -216,27 +288,42 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public List<String> getObjectsInCollection(String collectionPid, String contentModelPid) throws BackendInvalidCredsException, BackendMethodFailedException {
+    public List<String> getObjectsInCollection(String collectionPid, String contentModelPid) throws
+                                                                                             BackendInvalidCredsException,
+                                                                                             BackendMethodFailedException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public String invokeMethod(String cmpid, String methodName, Map<String, List<String>> parameters, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public String invokeMethod(String cmpid, String methodName, Map<String, List<String>> parameters,
+                               Long asOfTime) throws
+                                              BackendInvalidCredsException,
+                                              BackendMethodFailedException,
+                                              BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<Method> getStaticMethods(String cmpid, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public List<Method> getStaticMethods(String cmpid, Long asOfTime) throws
+                                                                      BackendInvalidCredsException,
+                                                                      BackendMethodFailedException,
+                                                                      BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<Method> getDynamicMethods(String objpid, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public List<Method> getDynamicMethods(String objpid, Long asOfTime) throws
+                                                                        BackendInvalidCredsException,
+                                                                        BackendMethodFailedException,
+                                                                        BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public List<LinkPattern> getLinks(String pid, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public List<LinkPattern> getLinks(String pid, Long asOfTime) throws
+                                                                 BackendInvalidCredsException,
+                                                                 BackendMethodFailedException,
+                                                                 BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -251,16 +338,18 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     @Override
     public String toString() {
         String result = "";
-        for (Map.Entry<String, String> entry: labelsAndPids.entrySet()) {
+        for (Map.Entry<String, String> entry : labelsAndPids.entrySet()) {
             List<String> datastreams = pidsAndStreams.get(entry.getValue());
             result += entry.getKey();
             result += "[";
             Iterator<String> datastreamIterator = datastreams.iterator();
             while (datastreamIterator.hasNext()) {
                 result += datastreamIterator.next();
-                if (datastreamIterator.hasNext()) result += ",";
+                if (datastreamIterator.hasNext()) {
+                    result += ",";
+                }
             }
-            result +="]\n";
+            result += "]\n";
         }
         return result;
     }

@@ -83,7 +83,6 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf = new HashMap<>();
 
 
-
         String rootPid = null;
         while (iterator.hasNext()) {
             ParsingEvent event = iterator.next();

@@ -21,16 +21,26 @@ import java.net.MalformedURLException;
 public class RecursiveFedoraCleanerTest {
 
     @Test(groups = "integrationTest")
-    public void testCleanFedora() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void testCleanFedora() throws
+                                  MalformedURLException,
+                                  JAXBException,
+                                  PIDGeneratorException,
+                                  BackendInvalidCredsException,
+                                  BackendMethodFailedException,
+                                  BackendInvalidResourceException {
         EnhancedFedora fedora = (new FedoraIngesterTestIT()).getEnhancedFedora();
         String label = TestConstants.TEST_BATCH_PATH;
         RecursiveFedoraCleaner.cleanFedora(fedora, label, true);
     }
 
 
-
-
-    public void testCleanFedoraWildcard() throws MalformedURLException, JAXBException, PIDGeneratorException, BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public void testCleanFedoraWildcard() throws
+                                          MalformedURLException,
+                                          JAXBException,
+                                          PIDGeneratorException,
+                                          BackendInvalidCredsException,
+                                          BackendMethodFailedException,
+                                          BackendInvalidResourceException {
         EnhancedFedora fedora = (new FedoraIngesterTestIT()).getEnhancedFedora();
         String foundPid = new FedoraIngesterTestIT().getEnhancedFedora().findObjectFromDCIdentifier("path:*").get(0);
         while (foundPid != null) {

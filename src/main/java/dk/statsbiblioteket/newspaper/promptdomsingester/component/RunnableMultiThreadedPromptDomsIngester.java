@@ -20,6 +20,7 @@ public class RunnableMultiThreadedPromptDomsIngester extends TreeProcessorAbstra
 
     /**
      * Constructur
+     *
      * @param properties
      * @param eFedora
      */
@@ -31,7 +32,7 @@ public class RunnableMultiThreadedPromptDomsIngester extends TreeProcessorAbstra
     private int parseInt(String value) {
         try {
             return Integer.parseInt(value);
-        } catch (NumberFormatException|NullPointerException e){
+        } catch (NumberFormatException | NullPointerException e) {
             return 4;
         }
     }
@@ -46,9 +47,9 @@ public class RunnableMultiThreadedPromptDomsIngester extends TreeProcessorAbstra
         TreeIterator iterator = createIterator(batch);
         MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(
                 eFedora,
-                new String[]{
-                        getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")},
-                parseInt(getProperties().getProperty(ConfigConstants.THREADS_PER_BATCH)));
+                new String[]{getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")},
+                parseInt(getProperties().getProperty(ConfigConstants.THREADS_PER_BATCH))
+        );
         try {
             ingester.ingest(iterator);
         } catch (Exception e) {

@@ -28,10 +28,18 @@ public class FedoraPlayground {
     //fedora.server=http://achernar:7880/fedora/objects/
     //pidgenerator.location=http://achernar:7880/pidgenerator-service
 
-    public static void main(String[] args) throws MalformedURLException, JAXBException, PIDGeneratorException, UnsupportedEncodingException {
+    public static void main(String[] args) throws
+                                           MalformedURLException,
+                                           JAXBException,
+                                           PIDGeneratorException,
+                                           UnsupportedEncodingException {
         Credentials creds = new Credentials("fedoraAdmin", "fedoraAdminPass");
-        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(creds, "http://achernar:7880/fedora", "http://achernar:7880/pidgenerator-service" , null);
-        FedoraRestExtras fedora = new FedoraRestExtras(creds,"http://achernar:7880/fedora");
+        EnhancedFedoraImpl eFedora = new EnhancedFedoraImpl(
+                creds,
+                "http://achernar:7880/fedora",
+                "http://achernar:7880/pidgenerator-service",
+                null);
+        FedoraRestExtras fedora = new FedoraRestExtras(creds, "http://achernar:7880/fedora");
         PidGeneratorImpl pidGenerator = new PidGeneratorImpl("http://achernar:7880/pidgenerator-service");
         String pid = pidGenerator.generateNextAvailablePID("newspaper");
         System.out.println(pid);
@@ -49,10 +57,11 @@ public class FedoraPlayground {
 
         public String createObject(String pid) throws UnsupportedEncodingException {
             WebResource resource = client.resource(location + "/objects");
-            resource.addFilter(new HTTPBasicAuthFilter(creds.getUsername(),creds.getPassword()));
-            return resource.path("/").path(URLEncoder.encode(pid, "UTF-8"))
-                    .type(MediaType.TEXT_XML_TYPE)
-                    .post(String.class);
+            resource.addFilter(new HTTPBasicAuthFilter(creds.getUsername(), creds.getPassword()));
+            return resource.path("/")
+                           .path(URLEncoder.encode(pid, "UTF-8"))
+                           .type(MediaType.TEXT_XML_TYPE)
+                           .post(String.class);
         }
 
     }

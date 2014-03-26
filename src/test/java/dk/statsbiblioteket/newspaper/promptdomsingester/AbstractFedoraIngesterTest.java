@@ -35,7 +35,7 @@ public abstract class AbstractFedoraIngesterTest {
 
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");
-        File testRoot = new File(System.getProperty("user.dir")+"/target/temp/", TestConstants.TEST_BATCH_ID);
+        File testRoot = new File(System.getProperty("user.dir") + "/target/temp/", TestConstants.TEST_BATCH_ID);
 
         if (testRoot.isDirectory()) {
             Files.delete(testRoot);
@@ -51,8 +51,7 @@ public abstract class AbstractFedoraIngesterTest {
 
         String rootPid = ingester.ingest(iterator);
         pid = rootPid;
-        System.out
-              .println("Created object tree rooted at " + rootPid);
+        System.out.println("Created object tree rooted at " + rootPid);
         Files.delete(testRoot);
     }
 }

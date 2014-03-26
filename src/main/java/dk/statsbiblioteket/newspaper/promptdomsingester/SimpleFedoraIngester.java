@@ -21,7 +21,8 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
 
     /**
      * Constructor for this method.
-     * @param fedora the fedora instance in which to ingest.
+     *
+     * @param fedora      the fedora instance in which to ingest.
      * @param collections the DOMS collections in which to ingest objects.
      */
     public SimpleFedoraIngester(EnhancedFedora fedora,
@@ -33,7 +34,9 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
 
     /**
      * A factory method to return an ingester tailored to the newspaper collection in which.
+     *
      * @param fedora the fedora in which to ingest.
+     *
      * @return the ingester.
      */
     @Deprecated
@@ -43,7 +46,9 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
 
     /**
      * A factory method to return an ingester
+     *
      * @param fedora the fedora in which to ingest.
+     *
      * @return the ingester.
      */
     public static SimpleFedoraIngester getNewspaperInstance(EnhancedFedora fedora, String[] collections) {
@@ -55,7 +60,6 @@ public class SimpleFedoraIngester extends AbstractFedoraIngester {
     public EnhancedFedora getEnhancedFedora() {
         return fedora;
     }
-
 
 
     @Override
