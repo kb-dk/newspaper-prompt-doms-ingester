@@ -5,6 +5,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceExcepti
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.ChecksumType;
+import dk.statsbiblioteket.doms.central.connectors.fedora.generated.Validation;
 import dk.statsbiblioteket.doms.central.connectors.fedora.linkpatterns.LinkPattern;
 import dk.statsbiblioteket.doms.central.connectors.fedora.methods.generated.Method;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
@@ -102,6 +103,17 @@ public class EnhancedFedoraStub implements EnhancedFedora {
                                                                                      BackendInvalidResourceException,
                                                                                      ConcurrentModificationException {
         datastreamsModified++;
+    }
+
+    @Override
+    public void modifyDatastreamByValue(String pid, String datastream, ChecksumType checksumType, String checksum,
+                                        byte[] contents, List<String> alternativeIdentifiers, String mimeType,
+                                        String comment, Long lastModifiedDate) throws
+                                                                               BackendMethodFailedException,
+                                                                               BackendInvalidCredsException,
+                                                                               BackendInvalidResourceException,
+                                                                               ConcurrentModificationException {
+
     }
 
     @Override
@@ -226,6 +238,14 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     @Override
     public List<LinkPattern> getLinks(String pid, Long asOfTime) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Validation validate(String pid) throws
+                                           BackendInvalidCredsException,
+                                           BackendMethodFailedException,
+                                           BackendInvalidResourceException {
+        return null;
     }
 
     @Override
