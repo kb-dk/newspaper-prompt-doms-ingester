@@ -1,4 +1,4 @@
-1.2.3
+1.3
 * Updated to newspaper-parent 1.2
 * Updated to Batch event framework 1.6
 * Restructuring and renaming after review
