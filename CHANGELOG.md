@@ -1,5 +1,10 @@
 1.2.3
-* Updated to newspaper-parent 1.1
+* Updated to newspaper-parent 1.2
+* Updated to Batch event framework 1.6
+* Restructuring and renaming after review
+* Log which fedora server you are using
+* Maven now spins up a fedora instance as part of the integration test.
+* The stand alone doms test server have been moved to a profile so that it can be ignored
 
 1.2.2
 * Update to newspaper-batch-event-framework 1.4.4, to make the component respect a maximum of reported failures
