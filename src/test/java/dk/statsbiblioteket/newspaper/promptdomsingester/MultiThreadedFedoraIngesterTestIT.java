@@ -11,6 +11,9 @@ import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
 import dk.statsbiblioteket.newspaper.TestConstants;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -31,6 +34,9 @@ import static org.testng.Assert.assertTrue;
  *
  */
 public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTest {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
 
 
@@ -106,5 +112,46 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
                                      .get(0);
         String altoStream = getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
+    }
+
+    /**
+     * Tests that if we ingest the same batch twice we don't duplicate rdf entries.
+     * @throws Exception
+     */
+    @Test(groups = "integrationTest")
+    public void testDoubleIngest() throws Exception {
+        log.debug("Doing first ingest.");
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
+        log.debug("---------------------------------------------------------------------");
+        log.debug("Doing second ingest.");
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
+        String pid = super.pid;
+        String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
+        assertEquals(pid, foundPid);
+        String nextPid
+                = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH + "/400022028241-1")
+                .get(0);
+        List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(
+                pid,
+                hasPartRelation,
+                new Date().getTime());
+        assertEquals(2, relations.size());
+        foundPid
+                = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH + "/400022028241-1/1795-06-01/adresseavisen1759-1795-06-01-0007B")
+                .get(0);
+        String xmlRdf = getEnhancedFedora().getXMLDatastreamContents(pid, "RELS-EXT");
+        int rdfMatches = StringUtils.countMatches(xmlRdf, "hasPart");
+        int distinctMatches = relations.size();
+        /*
+        This is a slightly ugly test because it assumes each distinct hasPart
+        is represented in xml as
+        <hasPart></hasPart>
+        but what if it comes out as
+        <hasPart/> ?
+        This should be fixed up using RDFManipulator to count the number of
+        relations properly with xml.
+         */
+        assertEquals(rdfMatches, 2*distinctMatches);
+        assertTrue(rdfMatches > 0, "Should be at least one hasPart relation.");
     }
 }

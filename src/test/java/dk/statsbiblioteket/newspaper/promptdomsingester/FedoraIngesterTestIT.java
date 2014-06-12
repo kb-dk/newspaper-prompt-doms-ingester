@@ -11,6 +11,7 @@ import dk.statsbiblioteket.doms.webservices.authentication.Credentials;
 import dk.statsbiblioteket.medieplatform.autonomous.ConfigConstants;
 import dk.statsbiblioteket.newspaper.RecursiveFedoraCleaner;
 import dk.statsbiblioteket.newspaper.TestConstants;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -111,5 +112,33 @@ public class FedoraIngesterTestIT extends AbstractFedoraIngesterTest {
                                      .get(0);
         String altoStream = getEnhancedFedora().getXMLDatastreamContents(foundPid, "ALTO", new Date().getTime());
         assertTrue(altoStream.length() > 100);
+    }
+
+    /**
+     * Tests that if we ingest the same batch twice we don't duplicate rdf entries.
+     * @throws Exception
+     */
+    @Test(groups = "integrationTest")
+    public void testDoubleIngest() throws Exception {
+        log.debug("Doing first ingest.");
+        super.testIngest(new SimpleFedoraIngester(getEnhancedFedora(), new String[]{}));
+        log.debug("---------------------------------------------------------------------");
+        log.debug("Doing second ingest.");
+        super.testIngest(new SimpleFedoraIngester(getEnhancedFedora(), new String[]{}));
+        String pid = super.pid;
+        String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
+        assertEquals(pid, foundPid);
+        String nextPid
+                = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH + "/400022028241-1")
+                .get(0);
+        List<FedoraRelation> relations = getEnhancedFedora().getNamedRelations(
+                pid,
+                hasPartRelation,
+                new Date().getTime());
+        String xmlRdf = getEnhancedFedora().getXMLDatastreamContents(pid, "RELS-EXT");
+        int rdfMatches = StringUtils.countMatches(xmlRdf, "hasPart");
+        int distinctMatches = relations.size();
+        assertEquals(rdfMatches, 2*distinctMatches);
+        assertTrue(rdfMatches > 0);
     }
 }

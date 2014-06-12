@@ -30,7 +30,7 @@ public class FedoraIngesterTestUnit extends AbstractFedoraIngesterTest {
 
     @Test
     public void testIngest() throws Exception {
-        super.testIngest(new SimpleFedoraIngester(getEnhancedFedora(), null));
+        super.testIngest(new SimpleFedoraIngester(getEnhancedFedora(), new String[]{"Newspapers"}));
         System.out.println("Created " + fedora.objectsCreated + " objects.");
         System.out.println("Modified " + fedora.datastreamsModified + " datastreams.");
         System.out.println(fedora.toString());

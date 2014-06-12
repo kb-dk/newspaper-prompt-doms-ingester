@@ -11,6 +11,8 @@ import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeBeginsPa
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeEndParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.ParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
+import dk.statsbiblioteket.newspaper.promptdomsingester.util.AddRelationshipRequest;
+import dk.statsbiblioteket.newspaper.promptdomsingester.util.UniqueRelationsCreator;
 import dk.statsbiblioteket.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,28 +167,27 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
 
     private void handleNodeEnd(EnhancedFedora fedora, Deque<String> pidStack, String rootPid, ParsingEvent event,
                                Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf) throws
-                                                                                                BackendMethodFailedException,
-                                                                                                BackendInvalidResourceException,
-                                                                                                BackendInvalidCredsException {
+            BackendMethodFailedException,
+            BackendInvalidResourceException,
+            BackendInvalidCredsException {
         String currentNodePid = pidStack.removeFirst();
         if (currentNodePid != null) {
             Pair<NodeBeginsParsingEvent, List<String>> children = childOf.remove(currentNodePid);
-            String comment = "Added relationship " + currentNodePid + " hasPart ";
-            fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
+            String comment = "Adding relationship " + currentNodePid + " hasPart (if necessary)";
+            AddRelationshipRequest addRelationshipRequest = new AddRelationshipRequest();
+            addRelationshipRequest.setPid(currentNodePid);
+            addRelationshipRequest.setSubject(null);
+            addRelationshipRequest.setPredicate(hasPartRelation);
+            addRelationshipRequest.setObjects(children.getRight());
+            addRelationshipRequest.setComment("Modified by AbstractFedoraIngester.");
+            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 0);
+            uniqueRelationsCreator.addRelationships(addRelationshipRequest);
+
+            //fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
+
             log.debug(comment);
-
-/*
-            if (children.getLeft() instanceof DataFileNodeBeginsParsingEvent) {
-                comment = "Added relationship " + currentNodePid + " hasFile ";
-                fedora.addRelations(currentNodePid, null, hasFileRelation, children.getRight(), false, comment);
-                log.debug(comment);
-            }
-*/
-
         }
 
-
-        //Possible publish of object here?
     }
 
     private String handleNodeBegin(EnhancedFedora fedora, Deque<String> pidStack, String rootPid,

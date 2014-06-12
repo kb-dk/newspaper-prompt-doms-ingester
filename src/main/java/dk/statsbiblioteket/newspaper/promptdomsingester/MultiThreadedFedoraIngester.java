@@ -10,6 +10,8 @@ import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.AttributePar
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeBeginsParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.ParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
+import dk.statsbiblioteket.newspaper.promptdomsingester.util.AddRelationshipRequest;
+import dk.statsbiblioteket.newspaper.promptdomsingester.util.UniqueRelationsCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +174,15 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
             childRealPids.add(childPid.join());
         }
         String comment = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
-        fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
+        AddRelationshipRequest addRelationshipRequest = new AddRelationshipRequest();
+        addRelationshipRequest.setPid(myPid);
+        addRelationshipRequest.setSubject(null);
+        addRelationshipRequest.setPredicate(hasPartRelation);
+        addRelationshipRequest.setObjects(childRealPids);
+        addRelationshipRequest.setComment("Modified by " + getClass().getSimpleName());
+        UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 2);
+        uniqueRelationsCreator.addRelationships(addRelationshipRequest);
+        //fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
         log.debug("{}, " + comment, myPid);
 
     }
