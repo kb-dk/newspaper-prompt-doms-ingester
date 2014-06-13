@@ -8,7 +8,9 @@ import org.w3c.dom.Node;
 import javax.xml.transform.TransformerException;
 
 /**
- * Simple class for manipulating xml representation of rdf datastream.
+ * Simple class for manipulating xml representation of rdf datastream. All the methods for adding
+ * elements to the rdf implicitly include deduplication. Ie the relation is only added if it is not already present.
+ *
  */
 public class RdfManipulator {
     Document document;
@@ -61,19 +63,7 @@ public class RdfManipulator {
             rdfDescriptionNode.appendChild(importedNode);
         }
     }
-    
-    private boolean containsFragment(Fragment fragment) {
-        XPathSelector selector = DOM.createXPathSelector("our", fragment.getPredicateNS(),
-                "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-        String xpath = "//our:" + fragment.getPredicateName() 
-                + "[@rdf:resource='info:fedora/" + fragment.getObject() + "']";
-        Node node = selector.selectNode(rdfDescriptionNode, xpath);
-        if(node == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+
 
     /**
      * Adds a content model.
@@ -84,8 +74,9 @@ public class RdfManipulator {
     }
 
     /**
-     * Adds a new named relation from this object to another object, e.g.
+     * Adds a new named external relation from this object to another object, e.g. to add
      * <hasPart xmlns="info:fedora/fedora-system:def/relations-external#" rdf:resource="info:fedora/uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"/>
+     * just call this method with the parameters ("hasPart", "uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8")
      * @param predicateName the short name of the relation, e.g. "hasPart"
      * @param objectPid the full doms pid of the object of the relation, e.g. "uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"
      */
@@ -94,7 +85,7 @@ public class RdfManipulator {
     }
     
     /**
-     * Adds a new named relation from this object to another object, e.g.
+     * Adds a new named doms-relation from this object to another object, e.g.
      * <hasPart xmlns="http://doms.statsbiblioteket.dk/relations/default/0/1/#" rdf:resource="info:fedora/uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"/>
      * @param predicateName the short name of the relation, e.g. "hasPart"
      * @param objectPid the full doms pid of the object of the relation, e.g. "uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"
@@ -103,13 +94,10 @@ public class RdfManipulator {
         return addRelation("http://doms.statsbiblioteket.dk/relations/default/0/1/#", predicateName, objectPid);
         
     }
-    
-    private RdfManipulator addRelation(String predicateNS, String predicateName, String objectPid) {
-        Fragment frag = new Fragment(predicateNS, predicateName, objectPid);
-        addFragmentToDescription(frag);
-        return this;
-    }
-    
+
+    /**
+     * Class representing an xml-fragment (a single relation) from an rdf-xml document.
+     */
     static public class Fragment {
         private String predicateNS;
         private String predicateName;
@@ -138,4 +126,25 @@ public class RdfManipulator {
                     + "xmlns=\"" + predicateNS + "\" rdf:resource=\"info:fedora/" + object + "\"/>";
         }
     }
+
+    private boolean containsFragment(Fragment fragment) {
+        XPathSelector selector = DOM.createXPathSelector("our", fragment.getPredicateNS(),
+                "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        String xpath = "//our:" + fragment.getPredicateName()
+                + "[@rdf:resource='info:fedora/" + fragment.getObject() + "']";
+        Node node = selector.selectNode(rdfDescriptionNode, xpath);
+        if(node == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private RdfManipulator addRelation(String predicateNS, String predicateName, String objectPid) {
+           Fragment frag = new Fragment(predicateNS, predicateName, objectPid);
+           addFragmentToDescription(frag);
+           return this;
+       }
+
+
 }

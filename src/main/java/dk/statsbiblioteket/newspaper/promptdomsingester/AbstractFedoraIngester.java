@@ -11,7 +11,7 @@ import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeBeginsPa
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeEndParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.ParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.TreeIterator;
-import dk.statsbiblioteket.newspaper.promptdomsingester.util.AddRelationshipRequest;
+import dk.statsbiblioteket.newspaper.promptdomsingester.util.AddRelationsRequest;
 import dk.statsbiblioteket.newspaper.promptdomsingester.util.UniqueRelationsCreator;
 import dk.statsbiblioteket.util.Pair;
 import org.slf4j.Logger;
@@ -174,14 +174,14 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
         if (currentNodePid != null) {
             Pair<NodeBeginsParsingEvent, List<String>> children = childOf.remove(currentNodePid);
             String comment = "Adding relationship " + currentNodePid + " hasPart (if necessary)";
-            AddRelationshipRequest addRelationshipRequest = new AddRelationshipRequest();
-            addRelationshipRequest.setPid(currentNodePid);
-            addRelationshipRequest.setSubject(null);
-            addRelationshipRequest.setPredicate(hasPartRelation);
-            addRelationshipRequest.setObjects(children.getRight());
-            addRelationshipRequest.setComment("Modified by AbstractFedoraIngester.");
+            AddRelationsRequest addRelationsRequest = new AddRelationsRequest();
+            addRelationsRequest.setPid(currentNodePid);
+            addRelationsRequest.setSubject(null);
+            addRelationsRequest.setPredicate(hasPartRelation);
+            addRelationsRequest.setObjects(children.getRight());
+            addRelationsRequest.setComment("Modified by AbstractFedoraIngester.");
             UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 0);
-            uniqueRelationsCreator.addRelationships(addRelationshipRequest);
+            uniqueRelationsCreator.addRelationships(addRelationsRequest);
 
             //fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
 

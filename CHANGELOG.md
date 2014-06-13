@@ -1,3 +1,6 @@
+1.4
+* Fixed https://sbprojects.statsbiblioteket.dk/jira/browse/NO-210 - duplicate relations created on repeated ingest.
+
 1.3
 * Updated to newspaper-parent 1.2
 * Updated to Batch event framework 1.6

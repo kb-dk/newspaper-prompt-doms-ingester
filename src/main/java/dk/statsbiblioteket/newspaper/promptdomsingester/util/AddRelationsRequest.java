@@ -3,9 +3,9 @@ package dk.statsbiblioteket.newspaper.promptdomsingester.util;
 import java.util.List;
 
 /**
- * Class encapsulating a request to add relationships to a fedora repository.
+ * Class encapsulating a request to add relations to a fedora repository.
  */
-public class AddRelationshipRequest {
+public class AddRelationsRequest {
 
     private String pid;
     private String subject;
