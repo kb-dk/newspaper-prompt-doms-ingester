@@ -138,6 +138,10 @@ public class FedoraIngesterTestIT extends AbstractFedoraIngesterTest {
         String xmlRdf = getEnhancedFedora().getXMLDatastreamContents(pid, "RELS-EXT");
         int rdfMatches = StringUtils.countMatches(xmlRdf, "hasPart");
         int distinctMatches = relations.size();
+        /*
+        The following assert has a factor 2 because each "hasPart" relation features the "hasPart" string
+        twice, as in <hasPart></hasPart> .
+         */
         assertEquals(rdfMatches, 2*distinctMatches);
         assertTrue(rdfMatches > 0);
     }

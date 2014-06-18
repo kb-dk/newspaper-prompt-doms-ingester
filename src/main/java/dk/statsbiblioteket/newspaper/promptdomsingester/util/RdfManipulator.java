@@ -102,7 +102,13 @@ public class RdfManipulator {
         private String predicateNS;
         private String predicateName;
         private String object;
-        
+
+        /**
+         * Constructor for this class.
+         * @param predicateNS Namespace of predicate, for example "http://doms.statsbiblioteket.dk/relations/default/0/1/#"
+         * @param predicateName Name of the predicate, for example "hasPart"
+         * @param object uuid (doms pid) of the object of the relation, e.g. "uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"
+         */
         public Fragment(String predicateNS, String predicateName, String object) {
             this.predicateNS = predicateNS;
             this.predicateName = predicateName;

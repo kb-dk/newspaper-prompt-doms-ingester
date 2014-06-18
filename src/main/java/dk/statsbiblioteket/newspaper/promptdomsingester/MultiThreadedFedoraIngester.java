@@ -41,6 +41,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
     private final EnhancedFedora fedora;
     private final String[] collections;
     private final int concurrency;
+    private final int maxRetries;
     private final List<ForkJoinTask<String>> childTasks = new ArrayList<>();
     private TreeIterator iterator;
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -48,14 +49,15 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
 
     /**
      * Create a new fedora ingester
-     *
      * @param fedora
      * @param collections
+     * @param maxRetries
      */
-    public MultiThreadedFedoraIngester(EnhancedFedora fedora, String[] collections, int concurrency) {
+    public MultiThreadedFedoraIngester(EnhancedFedora fedora, String[] collections, int concurrency, int maxRetries) {
         this.fedora = fedora;
         this.collections = collections;
         this.concurrency = concurrency;
+        this.maxRetries = maxRetries;
     }
 
     /**
@@ -66,8 +68,8 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
      * @param collections
      */
     protected MultiThreadedFedoraIngester(EnhancedFedora fedora, TreeIterator iterator, String[] collections,
-                                          int concurrency) {
-        this(fedora, collections, concurrency);
+                                          int concurrency, int maxRetries) {
+        this(fedora, collections, concurrency, maxRetries);
         this.iterator = iterator;
     }
 
@@ -113,7 +115,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
                             //And the iterator where this was called will skip to the next node begins that was not this tree
                             TreeIterator childIterator = iterator.skipToNextSibling();
                             MultiThreadedFedoraIngester childIngester = new MultiThreadedFedoraIngester(
-                                    fedora, childIterator, collections, concurrency);
+                                    fedora, childIterator, collections, concurrency, maxRetries);
                             childTasks.add(childIngester.fork());
                         }
                         break;

@@ -34,7 +34,6 @@ import java.util.Map;
 public abstract class AbstractFedoraIngester implements IngesterInterface {
 
     String hasPartRelation = "info:fedora/fedora-system:def/relations-external#hasPart";
-    String hasFileRelation = "http://doms.statsbiblioteket.dk/relations/default/0/1/#hasFile";
     private Logger log = LoggerFactory.getLogger(getClass());
 
     private static String getDatastreamName(String attributeName) throws DomsIngesterException {
@@ -182,9 +181,6 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             addRelationsRequest.setComment("Modified by AbstractFedoraIngester.");
             UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 0);
             uniqueRelationsCreator.addRelationships(addRelationsRequest);
-
-            //fedora.addRelations(currentNodePid, null, hasPartRelation, children.getRight(), false, comment);
-
             log.debug(comment);
         }
 

@@ -50,12 +50,20 @@ public class UniqueRelationsCreator {
         throw new BackendMethodFailedException("Failed to add relations after " + (maxRetries + 1) + "attempts.", lastException);
     }
 
+    /**
+     * Add the given rdf-relations. The relations are only added if they would not duplicate existing relations. This
+     * method tries just once and throws an exception if it fails.
+     * @param addRelationsRequest encapsulates the relations to be added.
+     * @return the number of relations actually added.
+     * @throws Exception if the method fails.
+     */
     private int AddRelationsOneTime(AddRelationsRequest addRelationsRequest) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
         String pid = addRelationsRequest.getPid();
         Date lastModifiedDate = fedora.getObjectProfile(pid, null).getObjectLastModifiedDate();
+        final String predicate = addRelationsRequest.getPredicate();
         List<FedoraRelation> existingRelations = fedora.getNamedRelations(
                 pid,
-                addRelationsRequest.getPredicate(),
+                predicate,
                 lastModifiedDate.getTime()
         );
         List<String> objects = addRelationsRequest.getObjects();
@@ -69,8 +77,8 @@ public class UniqueRelationsCreator {
         }
         objects.removeAll(objectsToRemove);
         RdfManipulator rdfManipulator = new RdfManipulator(fedora.getXMLDatastreamContents(pid, "RELS-EXT"));
-        String predicateNS = addRelationsRequest.getPredicate().split("#")[0] + "#";
-        String predicateName = addRelationsRequest.getPredicate().split("#")[1];
+        String predicateNS = predicate.split("#")[0] + "#";
+        String predicateName = predicate.split("#")[1];
         for (String object: objects) {
              rdfManipulator.addFragmentToDescription(new RdfManipulator.Fragment(predicateNS, predicateName, object));
         }

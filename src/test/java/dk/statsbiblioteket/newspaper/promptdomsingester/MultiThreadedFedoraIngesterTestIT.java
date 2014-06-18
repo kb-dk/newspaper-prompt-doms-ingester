@@ -95,7 +95,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
 
     @Test(groups = "integrationTest")
     public void testIngest() throws Exception {
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
@@ -121,10 +121,10 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
     @Test(groups = "integrationTest")
     public void testDoubleIngest() throws Exception {
         log.debug("Doing first ingest.");
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
         log.debug("---------------------------------------------------------------------");
         log.debug("Doing second ingest.");
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
@@ -142,7 +142,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
         String xmlRdf = getEnhancedFedora().getXMLDatastreamContents(pid, "RELS-EXT");
         int rdfMatches = StringUtils.countMatches(xmlRdf, "hasPart");
         int distinctMatches = relations.size();
-        /*
+        /* TODO
         This is a slightly ugly test because it assumes each distinct hasPart
         is represented in xml as
         <hasPart></hasPart>

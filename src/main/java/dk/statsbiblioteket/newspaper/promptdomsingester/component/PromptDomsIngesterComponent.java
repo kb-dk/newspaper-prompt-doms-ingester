@@ -27,7 +27,8 @@ public class PromptDomsIngesterComponent {
                                                               ConfigConstants.DOMS_PIDGENERATOR_URL,
                                                               ConfigConstants.AUTONOMOUS_MAXTHREADS,
                                                               ConfigConstants.AUTONOMOUS_LOCKSERVER_URL,
-                                                              ConfigConstants.AUTONOMOUS_SBOI_URL}; //etc.
+                                                              ConfigConstants.AUTONOMOUS_SBOI_URL,
+            dk.statsbiblioteket.newspaper.promptdomsingester.component.ConfigConstants.MAX_DOMS_UPDATE_RETRIES}; //etc.
 
     /**
      * This method reads a properties file either as the first parameter on the command line or as the system variable
