@@ -54,22 +54,26 @@ public class RecursiveFedoraCleaner {
                                                                                      BackendInvalidCredsException,
                                                                                      BackendMethodFailedException,
                                                                                      BackendInvalidResourceException {
-        List<FedoraRelation> relations = fedora.getNamedRelations(pid, hasPartRelation, new Date().getTime());
-        log.info("About to delete object '" + pid + "'");
-        if (doit) {
-            try {
-                deleteSingleObject(fedora, pid);
-            } catch (Exception e) {
-                log.warn("Could not delete " + pid, e);
+        try {
+            List<FedoraRelation> relations = fedora.getNamedRelations(pid, hasPartRelation, new Date().getTime());
+            log.info("About to delete object '" + pid + "'");
+            if (doit) {
+                try {
+                    deleteSingleObject(fedora, pid);
+                } catch (Exception e) {
+                    log.warn("Could not delete " + pid, e);
+                }
+            } else {
+                log.info("Didn't actually delete object '" + pid + "'");
             }
-        } else {
-            log.info("Didn't actually delete object '" + pid + "'");
-        }
-        for (FedoraRelation relation : relations) {
-            String nextPid = relation.getObject();
-            if (!pid.equals(nextPid)) {
-                purgeObject(fedora, nextPid, doit);
+            for (FedoraRelation relation : relations) {
+                String nextPid = relation.getObject();
+                if (!pid.equals(nextPid)) {
+                    purgeObject(fedora, nextPid, doit);
+                }
             }
+        } catch (BackendInvalidResourceException e) {
+            //ignore
         }
     }
 
@@ -77,7 +81,7 @@ public class RecursiveFedoraCleaner {
                                                                              BackendInvalidCredsException,
                                                                              BackendMethodFailedException,
                                                                              BackendInvalidResourceException {
+        fedora.modifyObjectState(pid, "I", "Deleted in integration test");
         fedora.deleteObject(pid, "Deleted in integration test");
     }
-
 }
