@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -173,28 +175,20 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
                                  BackendInvalidResourceException,
                                  BackendInvalidCredsException {
         ArrayList<String> childRealPids = new ArrayList<>();
-        try {
             for (ForkJoinTask<String> childPid : childTasks) {
-                childRealPids.add(childPid.get());
+                childRealPids.add(childPid.join());
             }
-        } catch (Exception e) {//The thread was interrupted or failed, this is a shutdown signal
-            for (ForkJoinTask<String> childTask : childTasks) {
-                childTask.cancel(true);
-            }
-            log.error("Caught Exception while waiting on join",e);
-            throw new RuntimeException("Exception waiting on join", e);
-        }
-        String comment = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
-        AddRelationsRequest addRelationsRequest = new AddRelationsRequest();
-        addRelationsRequest.setPid(myPid);
-        addRelationsRequest.setSubject(null);
-        addRelationsRequest.setPredicate(hasPartRelation);
-        addRelationsRequest.setObjects(childRealPids);
-        addRelationsRequest.setComment("Modified by " + getClass().getSimpleName());
-        UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 2);
-        uniqueRelationsCreator.addRelationships(addRelationsRequest);
-        //fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
-        log.debug("{}, " + comment, myPid);
+            String comment = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
+            AddRelationsRequest addRelationsRequest = new AddRelationsRequest();
+            addRelationsRequest.setPid(myPid);
+            addRelationsRequest.setSubject(null);
+            addRelationsRequest.setPredicate(hasPartRelation);
+            addRelationsRequest.setObjects(childRealPids);
+            addRelationsRequest.setComment("Modified by " + getClass().getSimpleName());
+            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 2);
+            uniqueRelationsCreator.addRelationships(addRelationsRequest);
+            //fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
+            log.debug("{}, " + comment, myPid);
 
     }
 
@@ -301,21 +295,21 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
         ForkJoinTask<String> result;
         result = forkJoinPool.submit(this);
         forkJoinPool.shutdown();
-
-        if (result != null) {
+        try {
+            return result.get();
+        } catch (CancellationException | ExecutionException | InterruptedException e) {
+            log.debug("Shutting down pool {}", forkJoinPool);
+            result.cancel(true);
+            forkJoinPool.shutdownNow();
             try {
-                return result.get();
-            } catch (Exception e) {
-                forkJoinPool.shutdownNow();
-                try {
-                    forkJoinPool.awaitTermination(3, TimeUnit.MINUTES);
-                } catch (InterruptedException e1) {
-                    throw new RuntimeException(e);
-                }
-                throw new RuntimeException(e);
+                forkJoinPool.awaitTermination(3, TimeUnit.MINUTES);
+            } catch (InterruptedException e1) {
+                //ignore
             }
-        } else {
-            return null;
+            log.debug("Pool shot down {}", forkJoinPool);
+            throw new IngesterShutdownException(e);
         }
     }
+
+
 }

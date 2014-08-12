@@ -164,6 +164,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
     @Test(groups = "integrationTest")
     public void testDisruptedIngest() throws Exception {
         log.debug("Doing disrupted ingest.");
+        final boolean[] shutdown = {false};
         Thread threads = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -173,24 +174,31 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
                 } catch (JAXBException | PIDGeneratorException | MalformedURLException e) {
                     throw new RuntimeException("Fedora Failure", e);
                 }
+                final MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(fedora,
+                        new String[0],
+                        4,
+                        2);
                 try {
-                    testIngest(new MultiThreadedFedoraIngester(fedora, new String[0], 2, 2));
+                    testIngest(ingester);
                     throw new RuntimeException("Was not stoppped");
                 } catch (IOException e) {
                     throw new RuntimeException("IO exception", e);
+                } catch (IngesterShutdownException e) {
+                    shutdown[0] = true;
+                    log.debug("Disrupted process correctly", e);
                 }
             }
         });
         threads.start();
-        Thread.sleep(4000);
+        Thread.sleep(10000);
         assertEquals(threads.getState(), Thread.State.WAITING);
-        System.out.println("Stopping disrupted ingest");
+        log.debug("Stopping disrupted ingest");
         threads.interrupt();
-        Thread.sleep(100);
-        System.out.println("Ingest disrupted");
-        assertEquals(threads.getState(), Thread.State.TIMED_WAITING);
-        threads.join();
-        assertEquals(threads.getState(), Thread.State.TERMINATED);
-        System.out.println("Waiting for the disrupted ingest to die");
+        log.debug("Ingest disrupted");
+
+        threads.join();//We should get the RuntimeException "Was not stopped" here, if the ingester is not stopped
+
+        log.debug("Waiting for the disrupted ingest to die");
+        assertTrue(shutdown[0]);
     }
 }
