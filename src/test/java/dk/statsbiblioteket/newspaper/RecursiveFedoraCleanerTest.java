@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
  */
 public class RecursiveFedoraCleanerTest {
 
-    @Test(groups = "integrationTest")
+    @Test(groups = "externalTest")
     public void testCleanFedora() throws
                                   MalformedURLException,
                                   JAXBException,

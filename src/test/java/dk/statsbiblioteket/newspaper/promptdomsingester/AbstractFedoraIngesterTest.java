@@ -8,6 +8,7 @@ import dk.statsbiblioteket.util.Files;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ public abstract class AbstractFedoraIngesterTest {
      *
      * @throws Exception
      */
-    public void testIngest(IngesterInterface ingester) throws Exception {
+    public void testIngest(IngesterInterface ingester) throws IOException {
 
         File rootTestdataDir = new File(System.getProperty("integration.test.newspaper.testdata"));
         File testSource = new File(rootTestdataDir, "small-test-batch/B400022028241-RT1/");

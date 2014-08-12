@@ -154,4 +154,43 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
         assertEquals(rdfMatches, 2*distinctMatches);
         assertTrue(rdfMatches > 0, "Should be at least one hasPart relation.");
     }
+
+
+    /**
+     * Tests that if we ingest the same batch twice we don't duplicate rdf entries.
+     *
+     * @throws Exception
+     */
+    @Test(groups = "integrationTest")
+    public void testDisruptedIngest() throws Exception {
+        log.debug("Doing disrupted ingest.");
+        Thread threads = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EnhancedFedora fedora;
+                try {
+                    fedora = getEnhancedFedora();
+                } catch (JAXBException | PIDGeneratorException | MalformedURLException e) {
+                    throw new RuntimeException("Fedora Failure", e);
+                }
+                try {
+                    testIngest(new MultiThreadedFedoraIngester(fedora, new String[0], 2, 2));
+                    throw new RuntimeException("Was not stoppped");
+                } catch (IOException e) {
+                    throw new RuntimeException("IO exception", e);
+                }
+            }
+        });
+        threads.start();
+        Thread.sleep(4000);
+        assertEquals(threads.getState(), Thread.State.WAITING);
+        System.out.println("Stopping disrupted ingest");
+        threads.interrupt();
+        Thread.sleep(100);
+        System.out.println("Ingest disrupted");
+        assertEquals(threads.getState(), Thread.State.TIMED_WAITING);
+        threads.join();
+        assertEquals(threads.getState(), Thread.State.TERMINATED);
+        System.out.println("Waiting for the disrupted ingest to die");
+    }
 }

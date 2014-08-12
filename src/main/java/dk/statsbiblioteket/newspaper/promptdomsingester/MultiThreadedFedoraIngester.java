@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the multithreaded fedora ingester
@@ -172,8 +173,16 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
                                  BackendInvalidResourceException,
                                  BackendInvalidCredsException {
         ArrayList<String> childRealPids = new ArrayList<>();
-        for (ForkJoinTask<String> childPid : childTasks) {
-            childRealPids.add(childPid.join());
+        try {
+            for (ForkJoinTask<String> childPid : childTasks) {
+                childRealPids.add(childPid.get());
+            }
+        } catch (Exception e) {//The thread was interrupted or failed, this is a shutdown signal
+            for (ForkJoinTask<String> childTask : childTasks) {
+                childTask.cancel(true);
+            }
+            log.error("Caught Exception while waiting on join",e);
+            throw new RuntimeException("Exception waiting on join", e);
         }
         String comment = "Added relationship from " + myPid + " hasPart to " + childRealPids.size() + " children";
         AddRelationsRequest addRelationsRequest = new AddRelationsRequest();
@@ -292,8 +301,19 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
         ForkJoinTask<String> result;
         result = forkJoinPool.submit(this);
         forkJoinPool.shutdown();
+
         if (result != null) {
-            return result.join();
+            try {
+                return result.get();
+            } catch (Exception e) {
+                forkJoinPool.shutdownNow();
+                try {
+                    forkJoinPool.awaitTermination(3, TimeUnit.MINUTES);
+                } catch (InterruptedException e1) {
+                    throw new RuntimeException(e);
+                }
+                throw new RuntimeException(e);
+            }
         } else {
             return null;
         }

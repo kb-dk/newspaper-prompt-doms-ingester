@@ -72,37 +72,33 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
      * @throws DomsIngesterException if failing to read a file or any file is encountered without a checksum
      */
     @Override
-    public String ingest(TreeIterator iterator) throws
-                                                BackendInvalidCredsException,
-                                                BackendMethodFailedException,
-                                                PIDGeneratorException,
-                                                BackendInvalidResourceException,
-                                                DomsIngesterException {
-        EnhancedFedora fedora = getEnhancedFedora();
-        Deque<String> pidStack = new ArrayDeque<>();
-
-        Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf = new HashMap<>();
-
-
-        String rootPid = null;
-        while (iterator.hasNext()) {
-            ParsingEvent event = iterator.next();
-            switch (event.getType()) {
-                case NodeBegin:
-                    NodeBeginsParsingEvent nodeBeginsParsingEvent = (NodeBeginsParsingEvent) event;
-                    rootPid = handleNodeBegin(fedora, pidStack, rootPid, nodeBeginsParsingEvent, childOf);
-                    break;
-                case NodeEnd:
-                    NodeEndParsingEvent nodeEndParsingEvent = (NodeEndParsingEvent) event;
-                    handleNodeEnd(fedora, pidStack, rootPid, nodeEndParsingEvent, childOf);
-                    break;
-                case Attribute:
-                    AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
-                    handleAttribute(fedora, pidStack, rootPid, attributeParsingEvent);
-                    break;
+    public String ingest(TreeIterator iterator)  {
+        try {
+            EnhancedFedora fedora = getEnhancedFedora();
+            Deque<String> pidStack = new ArrayDeque<>();
+            Map<String, Pair<NodeBeginsParsingEvent, List<String>>> childOf = new HashMap<>();
+            String rootPid = null;
+            while (iterator.hasNext()) {
+                ParsingEvent event = iterator.next();
+                switch (event.getType()) {
+                    case NodeBegin:
+                        NodeBeginsParsingEvent nodeBeginsParsingEvent = (NodeBeginsParsingEvent) event;
+                        rootPid = handleNodeBegin(fedora, pidStack, rootPid, nodeBeginsParsingEvent, childOf);
+                        break;
+                    case NodeEnd:
+                        NodeEndParsingEvent nodeEndParsingEvent = (NodeEndParsingEvent) event;
+                        handleNodeEnd(fedora, pidStack, rootPid, nodeEndParsingEvent, childOf);
+                        break;
+                    case Attribute:
+                        AttributeParsingEvent attributeParsingEvent = (AttributeParsingEvent) event;
+                        handleAttribute(fedora, pidStack, rootPid, attributeParsingEvent);
+                        break;
+                }
             }
+            return rootPid;
+        } catch (Exception e){
+            throw new RuntimeException(e);
         }
-        return rootPid;
     }
 
     private String exists(EnhancedFedora fedora, NodeBeginsParsingEvent nodeBeginsParsingEvent) throws

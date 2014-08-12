@@ -16,6 +16,6 @@ public interface IngesterInterface {
      *
      * @return the DOMS pid of the root object.
      */
-    String ingest(TreeIterator iterator) throws Exception;
+    String ingest(TreeIterator iterator);
 
 }
