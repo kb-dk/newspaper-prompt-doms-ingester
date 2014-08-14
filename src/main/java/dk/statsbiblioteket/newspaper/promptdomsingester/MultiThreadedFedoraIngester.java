@@ -298,7 +298,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
         try {
             return result.get();
         } catch (CancellationException | ExecutionException | InterruptedException e) {
-            log.info("Shutting down pool {}", forkJoinPool);
+            log.warn("Shutting down pool {}", forkJoinPool);
             result.cancel(true);
             forkJoinPool.shutdownNow();
             boolean shutdown;
