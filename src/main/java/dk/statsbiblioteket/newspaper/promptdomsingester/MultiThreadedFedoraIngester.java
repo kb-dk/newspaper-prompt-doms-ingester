@@ -298,13 +298,18 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
         try {
             return result.get();
         } catch (CancellationException | ExecutionException | InterruptedException e) {
-            log.debug("Shutting down pool {}", forkJoinPool);
+            log.info("Shutting down pool {}", forkJoinPool);
             result.cancel(true);
             forkJoinPool.shutdownNow();
+            boolean shutdown;
             try {
-                forkJoinPool.awaitTermination(3, TimeUnit.MINUTES);
+                shutdown = forkJoinPool.awaitTermination(3, TimeUnit.MINUTES);
             } catch (InterruptedException e1) {
-                //ignore
+                shutdown = false;
+            }
+            if (!shutdown){
+                log.error("Failed to shut down forkjoinpool {}",forkJoinPool);
+                System.exit(1);
             }
             log.debug("Pool shot down {}", forkJoinPool);
             throw new IngesterShutdownException(e);
