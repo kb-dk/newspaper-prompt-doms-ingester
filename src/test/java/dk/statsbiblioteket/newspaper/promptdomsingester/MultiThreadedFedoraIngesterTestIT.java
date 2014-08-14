@@ -190,7 +190,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
             }
         });
         threads.start();
-        Thread.sleep(10000);
+        Thread.sleep(3000);
         assertEquals(threads.getState(), Thread.State.WAITING);
         log.debug("Stopping disrupted ingest");
         threads.interrupt();
