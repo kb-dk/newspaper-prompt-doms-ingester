@@ -17,6 +17,7 @@ import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -101,43 +102,46 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, List<String> strings, String s3) throws
+    public Date modifyDatastreamByValue(String s, String s1, String s2, List<String> strings, String s3) throws
                                                                                                          BackendInvalidCredsException,
                                                                                                          BackendMethodFailedException,
                                                                                                          BackendInvalidResourceException {
         datastreamsModified++;
+        return new Date();
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, List<String> strings,
-                                        String s4) throws
+    public Date modifyDatastreamByValue(String s, String s1, String s2, String s3, List<String> strings, String s4) throws
                                                    BackendInvalidCredsException,
                                                    BackendMethodFailedException,
                                                    BackendInvalidResourceException {
         datastreamsModified++;
+        return new Date();
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings,
+    public Date modifyDatastreamByValue(String s, String s1, String s2, String s3, String s4, List<String> strings,
                                         String s5) throws
                                                    BackendInvalidCredsException,
                                                    BackendMethodFailedException,
                                                    BackendInvalidResourceException {
         datastreamsModified++;
+        return new Date();
     }
 
     @Override
-    public void modifyDatastreamByValue(String s, String s2, ChecksumType checksumType, String s3, byte[] bytes,
+    public Date modifyDatastreamByValue(String s, String s2, ChecksumType checksumType, String s3, byte[] bytes,
                                         List<String> strings, String s4, Long aLong) throws
                                                                                      BackendMethodFailedException,
                                                                                      BackendInvalidCredsException,
                                                                                      BackendInvalidResourceException,
                                                                                      ConcurrentModificationException {
         datastreamsModified++;
+        return new Date();
     }
 
     @Override
-    public void modifyDatastreamByValue(String pid, String datastream, ChecksumType checksumType, String checksum,
+    public Date modifyDatastreamByValue(String pid, String datastream, ChecksumType checksumType, String checksum,
                                         byte[] contents, List<String> alternativeIdentifiers, String mimeType,
                                         String comment, Long lastModifiedDate) throws
                                                                                BackendMethodFailedException,
@@ -145,6 +149,7 @@ public class EnhancedFedoraStub implements EnhancedFedora {
                                                                                BackendInvalidResourceException,
                                                                                ConcurrentModificationException {
 
+        return new Date();
     }
 
     @Override
@@ -184,7 +189,7 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5,
+    public Date addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5,
                                       List<String> strings, String s6) throws
                                                                        BackendInvalidCredsException,
                                                                        BackendMethodFailedException,
@@ -193,7 +198,7 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
+    public Date addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
                                       String s7, List<String> strings, String s8) throws
                                                                                   BackendInvalidCredsException,
                                                                                   BackendMethodFailedException,
@@ -202,7 +207,7 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public void addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
+    public Date addExternalDatastream(String s, String s1, String s2, String s3, String s4, String s5, String s6,
                                       List<String> strings, String s7) throws
                                                                        BackendInvalidCredsException,
                                                                        BackendMethodFailedException,
