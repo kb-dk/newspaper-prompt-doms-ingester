@@ -1,3 +1,7 @@
+1.5
+* Updated to batch event framework 1.10
+* Fixed the problem that caused the component to keep running when the connection to the lockserver is lost 
+
 1.4
 * Fixed https://sbprojects.statsbiblioteket.dk/jira/browse/NO-210 - duplicate relations created on repeated ingest.
 * Added new config parameter doms.update.retries (recommended value 2)
