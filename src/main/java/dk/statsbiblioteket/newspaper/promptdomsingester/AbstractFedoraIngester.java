@@ -136,7 +136,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             }
             String checksum = null;
             try {
-                checksum = event.getChecksum().toLowerCase();
+                checksum = event.getChecksum();
             } catch (IOException e) {
                 throw new DomsIngesterException(e);
             }
@@ -145,7 +145,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
                         pidStack.peekFirst(),
                         datastreamName,
                         metadataText,
-                        checksum,
+                        checksum.toLowerCase(),
                         alternativeIdentifiers,
                         "Added by ingester.");
             } else {
