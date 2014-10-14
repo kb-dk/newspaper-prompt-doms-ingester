@@ -43,7 +43,7 @@ public class RunnableMultiThreadedPromptDomsIngester extends TreeProcessorAbstra
     }
 
     @Override
-    public void doWorkOnBatch(Batch batch, ResultCollector resultCollector) {
+    public void doWorkOnItem(Batch batch, ResultCollector resultCollector) {
         TreeIterator iterator = createIterator(batch);
         MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(
                 eFedora,

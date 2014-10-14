@@ -28,7 +28,7 @@ public class RunnablePromptDomsIngester extends TreeProcessorAbstractRunnableCom
     }
 
     @Override
-    public void doWorkOnBatch(Batch batch, ResultCollector resultCollector) {
+    public void doWorkOnItem(Batch batch, ResultCollector resultCollector) {
         IngesterInterface ingester = SimpleFedoraIngester.getNewspaperInstance(
                 eFedora, new String[]{getProperties().getProperty(
                         ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")}
