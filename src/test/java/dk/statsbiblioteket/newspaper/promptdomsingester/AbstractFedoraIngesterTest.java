@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import static org.testng.Assert.assertTrue;
@@ -48,7 +49,8 @@ public abstract class AbstractFedoraIngesterTest {
 
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
         TransformingIteratorForFileSystems iterator = new TransformingIteratorForFileSystems(
-                testRoot, Pattern.quote("."), ".*\\.jp2$", ".md5");
+                testRoot, Pattern.quote("."), ".*\\.jp2$", ".md5",
+                Arrays.asList("transfer_complete", "transfer_acknowledged"));
 
         String rootPid = ingester.ingest(iterator);
         pid = rootPid;
