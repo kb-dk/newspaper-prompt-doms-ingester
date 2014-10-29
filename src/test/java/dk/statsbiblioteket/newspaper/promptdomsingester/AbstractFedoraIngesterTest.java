@@ -48,10 +48,13 @@ public abstract class AbstractFedoraIngesterTest {
 
 
         assertTrue(testRoot.exists(), testRoot.getAbsolutePath() + " does not exist.");
-        TransformingIteratorForFileSystems iterator = new TransformingIteratorForFileSystems(
-                testRoot, Pattern.quote("."), ".*\\.jp2$", ".md5",
-                Arrays.asList("transfer_complete", "transfer_acknowledged"));
-
+        TransformingIteratorForFileSystems iterator = new TransformingIteratorForFileSystems(testRoot,
+                                                                                             TransformingIteratorForFileSystems.GROUPING_PATTERN_DEFAULT_VALUE,
+                                                                                             TransformingIteratorForFileSystems.DATA_FILE_PATTERN_JP2_VALUE,
+                                                                                             TransformingIteratorForFileSystems.CHECKSUM_POSTFIX_DEFAULT_VALUE,
+                                                                                             Arrays.asList(
+                                                                                                     TransformingIteratorForFileSystems.IGNORED_FILES_DEFAULT_VALUE
+                                                                                                             .split(",")));
         String rootPid = ingester.ingest(iterator);
         pid = rootPid;
         System.out.println("Created object tree rooted at " + rootPid);
