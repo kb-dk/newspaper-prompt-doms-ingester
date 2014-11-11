@@ -1,3 +1,7 @@
+1.6
+* Use newest version of item event framework.
+* Add possibility to ignore a configurable list of files
+
 1.5
 * Updated to batch event framework 1.10
 * Fixed the problem that caused the component to keep running when the connection to the lockserver is lost 
