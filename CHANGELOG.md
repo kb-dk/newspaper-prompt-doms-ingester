@@ -1,6 +1,7 @@
 1.6
 * Use newest version of item event framework.
 * Add possibility to ignore a configurable list of files
+* Configuration has been extended and changed and example config has been updated. Please update your configuration files.
 
 1.5
 * Updated to batch event framework 1.10
