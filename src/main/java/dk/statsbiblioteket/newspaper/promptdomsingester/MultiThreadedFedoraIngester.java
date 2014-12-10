@@ -5,6 +5,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidCredsException;
 import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceException;
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
+import dk.statsbiblioteket.doms.central.connectors.fedora.ChecksumType;
 import dk.statsbiblioteket.doms.central.connectors.fedora.pidGenerator.PIDGeneratorException;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.AttributeParsingEvent;
 import dk.statsbiblioteket.medieplatform.autonomous.iterator.common.NodeBeginsParsingEvent;
@@ -229,14 +230,15 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
             } catch (IOException e) {
                 throw new DomsIngesterException(e);
             }
-            if (checksum != null) {
-                fedora.modifyDatastreamByValue(
-                        myPid, datastreamName, metadataText, checksum, alternativeIdentifiers, "Added by ingester.");
-            } else {
-                fedora.modifyDatastreamByValue(
-                        myPid, datastreamName, metadataText, alternativeIdentifiers, "Added by ingester.");
-
-            }
+            fedora.modifyDatastreamByValue(myPid,
+                                                  datastreamName,
+                                                  ChecksumType.MD5,
+                                                  checksum,
+                                                  metadataText.getBytes(),
+                                                  alternativeIdentifiers,
+                                                  "text/xml",
+                                                  "Added by ingester.",
+                                                  null);
         }
     }
 
