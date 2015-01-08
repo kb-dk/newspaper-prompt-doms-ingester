@@ -16,38 +16,14 @@ import java.util.List;
 public class UniqueRelationsCreator {
 
     private EnhancedFedora fedora;
-    private int maxRetries;
 
     /**
      * Constructor for this class.
      * @param fedora the fedora instance with which to communicate.
-     * @param maxRetries the maximum number of retries if the first call to add relations fails.
+     *
      */
-    public UniqueRelationsCreator(EnhancedFedora fedora, int maxRetries) {
-        if (maxRetries < 0 ) {
-            throw new RuntimeException("Cannot have maxRetries < 0 :"  + maxRetries);
-        }
+    public UniqueRelationsCreator(EnhancedFedora fedora) {
         this.fedora = fedora;
-        this.maxRetries = maxRetries;
-    }
-
-    /**
-     * Add the given rdf-relations. The relations are only added if they would not duplicate existing relations.
-     * @param addRelationsRequest encapsulates the relations to be added.
-     * @return the number of relations actually added.
-     * @throws Exception if the method fails after all retries have been used.
-     */
-    public int addRelationships(AddRelationsRequest addRelationsRequest) throws BackendMethodFailedException, BackendInvalidCredsException, BackendInvalidResourceException {
-        Exception lastException = null;
-        for (int i=0; i <= maxRetries; i++) {
-            try {
-                return AddRelationsOneTime(addRelationsRequest);
-            } catch (Exception e) {
-                //Just try again
-                lastException = e;
-            }
-        }
-        throw new BackendMethodFailedException("Failed to add relations after " + (maxRetries + 1) + "attempts.", lastException);
     }
 
     /**
@@ -57,7 +33,7 @@ public class UniqueRelationsCreator {
      * @return the number of relations actually added.
      * @throws Exception if the method fails.
      */
-    private int AddRelationsOneTime(AddRelationsRequest addRelationsRequest) throws BackendInvalidCredsException, BackendMethodFailedException, BackendInvalidResourceException {
+    public int addRelationships(AddRelationsRequest addRelationsRequest) throws BackendMethodFailedException, BackendInvalidCredsException, BackendInvalidResourceException {
         String pid = addRelationsRequest.getPid();
         Date lastModifiedDate = fedora.getObjectProfile(pid, null).getObjectLastModifiedDate();
         final String predicate = addRelationsRequest.getPredicate();

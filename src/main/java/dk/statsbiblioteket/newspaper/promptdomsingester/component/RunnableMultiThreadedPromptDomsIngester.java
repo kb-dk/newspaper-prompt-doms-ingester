@@ -48,9 +48,7 @@ public class RunnableMultiThreadedPromptDomsIngester extends TreeProcessorAbstra
         MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(
                 eFedora,
                 new String[]{getProperties().getProperty(ConfigConstants.DOMS_COLLECTION, "doms:Newspaper_Collection")},
-                parseInt(getProperties().getProperty(ConfigConstants.THREADS_PER_BATCH)),
-                parseInt(getProperties().getProperty(dk.statsbiblioteket.newspaper.promptdomsingester.component.ConfigConstants.MAX_DOMS_UPDATE_RETRIES))
-        );
+                parseInt(getProperties().getProperty(ConfigConstants.THREADS_PER_BATCH)));
         try {
             ingester.ingest(iterator);
         } catch (Exception e) {

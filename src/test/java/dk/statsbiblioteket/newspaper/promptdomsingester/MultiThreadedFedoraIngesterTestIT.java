@@ -95,7 +95,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
 
     @Test(groups = "integrationTest")
     public void testIngest() throws Exception {
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
@@ -121,10 +121,10 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
     @Test(groups = "integrationTest")
     public void testDoubleIngest() throws Exception {
         log.debug("Doing first ingest.");
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
         log.debug("---------------------------------------------------------------------");
         log.debug("Doing second ingest.");
-        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8, 2));
+        super.testIngest(new MultiThreadedFedoraIngester(getEnhancedFedora(), new String[0], 8));
         String pid = super.pid;
         String foundPid = getEnhancedFedora().findObjectFromDCIdentifier(TestConstants.TEST_BATCH_PATH).get(0);
         assertEquals(pid, foundPid);
@@ -176,8 +176,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
                 }
                 final MultiThreadedFedoraIngester ingester = new MultiThreadedFedoraIngester(fedora,
                         new String[0],
-                        4,
-                        2);
+                        4);
                 try {
                     testIngest(ingester);
                     throw new RuntimeException("Was not stoppped");

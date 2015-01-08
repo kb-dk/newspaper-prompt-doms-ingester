@@ -45,7 +45,6 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
     private final EnhancedFedora fedora;
     private final String[] collections;
     private final int concurrency;
-    private final int maxRetries;
     private final List<ForkJoinTask<String>> childTasks = new ArrayList<>();
     private TreeIterator iterator;
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -55,25 +54,22 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
      * Create a new fedora ingester
      * @param fedora
      * @param collections
-     * @param maxRetries
      */
-    public MultiThreadedFedoraIngester(EnhancedFedora fedora, String[] collections, int concurrency, int maxRetries) {
+    public MultiThreadedFedoraIngester(EnhancedFedora fedora, String[] collections, int concurrency) {
         this.fedora = fedora;
         this.collections = collections;
         this.concurrency = concurrency;
-        this.maxRetries = maxRetries;
     }
 
     /**
      * secret constructor used by the multi threaded framework to spawn new tasks
-     *
-     * @param fedora
+     *  @param fedora
      * @param iterator
      * @param collections
      */
     protected MultiThreadedFedoraIngester(EnhancedFedora fedora, TreeIterator iterator, String[] collections,
-                                          int concurrency, int maxRetries) {
-        this(fedora, collections, concurrency, maxRetries);
+                                          int concurrency) {
+        this(fedora, collections, concurrency);
         this.iterator = iterator;
     }
 
@@ -119,7 +115,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
                             //And the iterator where this was called will skip to the next node begins that was not this tree
                             TreeIterator childIterator = iterator.skipToNextSibling();
                             MultiThreadedFedoraIngester childIngester = new MultiThreadedFedoraIngester(
-                                    fedora, childIterator, collections, concurrency, maxRetries);
+                                    fedora, childIterator, collections, concurrency);
                             childTasks.add(childIngester.fork());
                         }
                         break;
@@ -186,7 +182,7 @@ public class MultiThreadedFedoraIngester extends RecursiveTask<String> implement
             addRelationsRequest.setPredicate(hasPartRelation);
             addRelationsRequest.setObjects(childRealPids);
             addRelationsRequest.setComment("Modified by " + getClass().getSimpleName());
-            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 2);
+            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora);
             uniqueRelationsCreator.addRelationships(addRelationsRequest);
             //fedora.addRelations(myPid, null, hasPartRelation, childRealPids, false, comment);
             log.debug("{}, " + comment, myPid);

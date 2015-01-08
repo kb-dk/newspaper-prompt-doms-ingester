@@ -175,7 +175,7 @@ public abstract class AbstractFedoraIngester implements IngesterInterface {
             addRelationsRequest.setPredicate(hasPartRelation);
             addRelationsRequest.setObjects(children.getRight());
             addRelationsRequest.setComment("Modified by AbstractFedoraIngester.");
-            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora, 0);
+            UniqueRelationsCreator uniqueRelationsCreator = new UniqueRelationsCreator(fedora);
             uniqueRelationsCreator.addRelationships(addRelationsRequest);
             log.debug(comment);
         }
