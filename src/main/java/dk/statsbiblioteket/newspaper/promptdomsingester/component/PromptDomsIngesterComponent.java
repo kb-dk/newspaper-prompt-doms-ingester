@@ -53,7 +53,7 @@ public class PromptDomsIngesterComponent {
                 creds,
                 fedoraLocation,
                 properties.getProperty(ConfigConstants.DOMS_PIDGENERATOR_URL),
-                null, fedoraRetries, fedoraRetries, fedoraRetries, fedoraDelayBetweenRetries);
+                null, fedoraRetries, fedoraDelayBetweenRetries);
 
         RunnableComponent component = new RunnableMultiThreadedPromptDomsIngester(properties, eFedora);
         CallResult result = NewspaperBatchAutonomousComponentUtils.startAutonomousComponent(properties, component);
