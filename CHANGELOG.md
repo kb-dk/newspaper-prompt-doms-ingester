@@ -1,5 +1,7 @@
 1.7
 * Add extra method for clearing content model to the RDF manipulator - only relevant when used as a library
+* Use newest version of framework. This includes new retry logic
+* Explicitly set content type to text/xml
 
 1.6
 * Use newest version of item event framework.
