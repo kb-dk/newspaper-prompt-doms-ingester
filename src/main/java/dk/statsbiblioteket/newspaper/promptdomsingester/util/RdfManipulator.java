@@ -4,6 +4,7 @@ import dk.statsbiblioteket.util.xml.DOM;
 import dk.statsbiblioteket.util.xml.XPathSelector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.transform.TransformerException;
 
@@ -93,6 +94,22 @@ public class RdfManipulator {
     public RdfManipulator addDomsRelation(String predicateName, String objectPid) {
         return addRelation("http://doms.statsbiblioteket.dk/relations/default/0/1/#", predicateName, objectPid);
         
+    }
+
+    /**
+     * Remove all content model relations.
+     */
+    public void clearOldContentModels() {
+        XPathSelector selector = DOM.createXPathSelector("our", "info:fedora/fedora-system:def/model#",
+                "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        String xpath = "//our:" + "hasModel";
+        NodeList nodes = selector.selectNodeList(rdfDescriptionNode, xpath);
+        if(nodes != null) {
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                node.getParentNode().removeChild(node);
+            }
+        }
     }
 
     /**
