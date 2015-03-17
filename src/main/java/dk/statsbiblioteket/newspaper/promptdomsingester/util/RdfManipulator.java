@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerException;
  *
  */
 public class RdfManipulator {
+    private static final String DOMS_PREDICATE_NAMESPACE = "http://doms.statsbiblioteket.dk/relations/default/0/1/#";
     Document document;
     Node rdfDescriptionNode;
 
@@ -92,7 +93,7 @@ public class RdfManipulator {
      * @param objectPid the full doms pid of the object of the relation, e.g. "uuid:05d840bf-8bb6-48e5-b214-2ab39f6259f8"
      */
     public RdfManipulator addDomsRelation(String predicateName, String objectPid) {
-        return addRelation("http://doms.statsbiblioteket.dk/relations/default/0/1/#", predicateName, objectPid);
+        return addRelation(DOMS_PREDICATE_NAMESPACE, predicateName, objectPid);
         
     }
 
@@ -108,6 +109,26 @@ public class RdfManipulator {
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 node.getParentNode().removeChild(node);
+            }
+        }
+    }
+
+    /**
+     * Remove relations with predicates in the DOMS namespace with the given names.
+     *
+     * @param predicates Local part of the DOMS predicates
+     */
+    public void clearDomsRelations(String... predicates) {
+        XPathSelector selector = DOM.createXPathSelector("our", DOMS_PREDICATE_NAMESPACE,
+                "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        for (String predicate : predicates) {
+            String xpath = "//our:" + predicate;
+            NodeList nodes = selector.selectNodeList(rdfDescriptionNode, xpath);
+            if (nodes != null) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Node node = nodes.item(i);
+                    node.getParentNode().removeChild(node);
+                }
             }
         }
     }

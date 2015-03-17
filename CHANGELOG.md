@@ -1,3 +1,6 @@
+1.8
+* Add extra method for clearing doms relations to the RDF manipulator - only relevant when used as a library
+
 1.7
 * Add extra method for clearing content model to the RDF manipulator - only relevant when used as a library
 * Use newest version of framework. This includes new retry logic
