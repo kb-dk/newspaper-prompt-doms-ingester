@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>newspaper-prompt-doms-ingester</artifactId>
-    <version>1.8-SNAPSHOT</version>
+    <version>1.8</version>
 
     <repositories>
         <repository>
@@ -29,7 +29,7 @@
         <connection>scm:git:https://github.com/statsbiblioteket/newspaper-prompt-doms-ingester.git</connection>
         <developerConnection>scm:git:git@github.com:statsbiblioteket/newspaper-prompt-doms-ingester.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>newspaper-prompt-doms-ingester-1.8</tag>
     </scm>
 
     <dependencies>
@@ -69,12 +69,12 @@
         <dependency>
             <groupId>dk.statsbiblioteket.newspaper</groupId>
             <artifactId>tree-processor-runnable-component</artifactId>
-            <version>2.7-SNAPSHOT</version>
+            <version>2.6</version>
         </dependency>
         <dependency>
             <groupId>dk.statsbiblioteket.newspaper</groupId>
             <artifactId>newspaper-autonomous-component</artifactId>
-            <version>2.7-SNAPSHOT</version>
+            <version>2.6</version>
         </dependency>
 
     </dependencies>
