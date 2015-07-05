@@ -293,9 +293,9 @@ public class EnhancedFedoraStub implements EnhancedFedora {
     }
 
     @Override
-    public List<String> getObjectsInCollection(String collectionPid, String contentModelPid) throws
-                                                                                             BackendInvalidCredsException,
-                                                                                             BackendMethodFailedException {
+    public List<String> getContentModelsInCollection(String collectionPid) throws
+                                                                           BackendInvalidCredsException,
+                                                                           BackendMethodFailedException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
