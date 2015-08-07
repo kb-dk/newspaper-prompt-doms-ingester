@@ -1,3 +1,6 @@
+1.9
+ * renamed the start script to pollAndWork.sh
+
 1.8
 * Add extra method for clearing doms relations to the RDF manipulator - only relevant when used as a library
 
