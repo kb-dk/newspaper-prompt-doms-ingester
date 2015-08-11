@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -165,6 +166,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
     public void testDisruptedIngest() throws Exception {
         log.debug("Doing disrupted ingest.");
         final boolean[] shutdown = {false};
+        final boolean[] completed = {false};
         Thread threads = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -179,7 +181,7 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
                         4);
                 try {
                     testIngest(ingester);
-                    throw new RuntimeException("Was not stoppped");
+                    completed[0] = true;
                 } catch (IOException e) {
                     throw new RuntimeException("IO exception", e);
                 } catch (IngesterShutdownException e) {
@@ -189,7 +191,8 @@ public class MultiThreadedFedoraIngesterTestIT extends AbstractFedoraIngesterTes
             }
         });
         threads.start();
-        Thread.sleep(3000);
+        Thread.sleep(1000);
+        assertFalse(completed[0], "Ingester completed naturally");
         assertEquals(threads.getState(), Thread.State.WAITING);
         log.debug("Stopping disrupted ingest");
         threads.interrupt();
