@@ -5,6 +5,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceExcepti
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelation;
+import dk.statsbiblioteket.doms.central.connectors.fedora.utils.FedoraUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class RecursiveFedoraCleaner {
                 log.info("Didn't actually delete object '" + pid + "'");
             }
             for (FedoraRelation relation : relations) {
-                String nextPid = relation.getObject();
+                String nextPid = FedoraUtil.ensurePID(relation.getObject());
                 if (!pid.equals(nextPid)) {
                     purgeObject(fedora, nextPid, doit);
                 }
