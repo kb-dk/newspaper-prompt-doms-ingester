@@ -5,6 +5,7 @@ import dk.statsbiblioteket.doms.central.connectors.BackendInvalidResourceExcepti
 import dk.statsbiblioteket.doms.central.connectors.BackendMethodFailedException;
 import dk.statsbiblioteket.doms.central.connectors.EnhancedFedora;
 import dk.statsbiblioteket.doms.central.connectors.fedora.structures.FedoraRelation;
+import dk.statsbiblioteket.doms.central.connectors.fedora.utils.FedoraUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,11 +43,11 @@ public class UniqueRelationsCreator {
                 predicate,
                 lastModifiedDate.getTime()
         );
-        List<String> objects = addRelationsRequest.getObjects();
+        List<String> objects = clean(addRelationsRequest.getObjects());
         List<String> objectsToRemove = new ArrayList<>();
         for (FedoraRelation existingRelation: existingRelations) {
             for (String object: objects) {
-                if (existingRelation.getObject().equals(object)) {
+                if (FedoraUtil.ensurePID(existingRelation.getObject()).equals(object)) {
                     objectsToRemove.add(object);
                 }
             }
@@ -58,13 +59,23 @@ public class UniqueRelationsCreator {
         for (String object: objects) {
              rdfManipulator.addFragmentToDescription(new RdfManipulator.Fragment(predicateNS, predicateName, object));
         }
-        fedora.modifyDatastreamByValue(pid, "RELS-EXT",
-                null,
-                null,
-                rdfManipulator.toString().getBytes(),
-                new ArrayList<String>(), "application/rdf+xml",
-                addRelationsRequest.getComment(),
-                lastModifiedDate.getTime());
+        if (!objects.isEmpty()) {
+            fedora.modifyDatastreamByValue(pid, "RELS-EXT",
+                    null,
+                    null,
+                    rdfManipulator.toString().getBytes(),
+                    new ArrayList<String>(), "application/rdf+xml",
+                    addRelationsRequest.getComment(),
+                    lastModifiedDate.getTime());
+        }
         return objects.size();
+    }
+
+    private List<String> clean(List<String> objects) {
+        ArrayList<String> result = new ArrayList<>(objects.size());
+        for (String object : objects) {
+            result.add(FedoraUtil.ensurePID(object));
+        }
+        return result;
     }
 }
