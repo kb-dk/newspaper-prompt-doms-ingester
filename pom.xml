@@ -183,12 +183,58 @@
                         </goals>
                         <configuration>
                             <imageName>${project.artifactId}</imageName>
-                            <dockerDirectory>${project.basedir}/docker</dockerDirectory><!--Where to file the Dockerfile-->
+                            <baseImage>openjdk:7-jre</baseImage>
+                            <env>
+                                <!--Default values, can be overridden when container is started-->
+                                <artifactId>${project.artifactId}</artifactId>
+                                <doms_username>fedoraAdmin</doms_username>
+                                <doms_password>fedoraAdminPass</doms_password>
+                                <doms_host>doms</doms_host>
+                                <doms_port>7880</doms_port>
+                                <avis_folder>/avis-upload/</avis_folder>
+                                <zookeeper_host>zookeeper</zookeeper_host>
+                                <zookeeper_port>2181</zookeeper_port>
+                                <sboi_host>sboi</sboi_host>
+                                <sboi_port>58608</sboi_port>
+                            </env>
+                            <runs>
+                                <!--Install the package in the right folder-->
+                                <run>mkdir /opt/${project.artifactId};\
+                                    cd /opt/${project.artifactId};\
+                                    mv /tmp/${project.build.finalName}/* .;\
+                                    rm -d /tmp/${project.build.finalName};
+                                </run>
+                                <!--Make /conf the configuration folder-->
+                                <run>
+                                    mv /tmp/logback.xml /opt/${project.artifactId}/conf/;\
+                                    mv /opt/${project.artifactId}/conf /opt/${project.artifactId}/conf.orig
+                                </run>
+                                <!--Install a crontab-->
+                                <run>apt-get update -q;\
+                                     apt-get install -y cron;\
+                                    touch /var/log/cron.log;\
+                                    (crontab -l 2>/dev/null; echo "*/5 * * * * /opt/${project.artifactId}/bin/pollAndWork.sh >> /var/log/cron.log 2>&amp;1") | crontab -
+                                </run>
+                            </runs>
+                            <!--The entrypoint sets up the configuration and runs whatever command is given-->
+                            <entryPoint>[ "/dockerEntry.sh" ]</entryPoint>
+                            <!--The standard command starts cron and tails the log forever-->
+                            <cmd>"cron &amp;&amp; tail -f /var/log/cron.log"</cmd>
                             <resources>
                                 <resource><!--Copy the package to the docker dir, so it is available for the Dockerfile-->
-                                    <targetPath>/</targetPath>
+                                    <targetPath>/tmp/</targetPath>
                                     <directory>${project.build.directory}</directory>
                                     <include>${project.build.finalName}-package.tar.gz</include>
+                                </resource>
+                                <resource>
+                                    <targetPath>/tmp/</targetPath>
+                                    <directory>src/main/docker</directory>
+                                    <include>logback.xml</include>
+                                </resource>
+                                <resource>
+                                    <targetPath>/</targetPath>
+                                    <directory>src/main/docker</directory>
+                                    <include>dockerEntry.sh</include>
                                 </resource>
                             </resources>
                         </configuration>
@@ -208,7 +254,7 @@
                     <execution>
                         <!--Push the image to SBs account on docker hub-->
                         <id>push-image</id>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>push</goal>
                         </goals>
