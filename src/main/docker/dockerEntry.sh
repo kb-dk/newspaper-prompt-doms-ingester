@@ -8,7 +8,7 @@ if [ -f /conf/config.properties ]; then
 else # Else, parse the conf.orig folder with the environment
     if [ ! -f /conf/config.properties ]; then
         mkdir -p /opt/${artifactId}/conf/
-        for file in /opt/${artifactId}/conf.orig/*; do
+        for file in /opt/${artifactId}/conf.orig/*.properties; do
             outputFile="/opt/${artifactId}/conf/$(basename $file)"
             cat $file | while read line; do
                 #This oneliner converts lines like
@@ -20,6 +20,9 @@ else # Else, parse the conf.orig folder with the environment
                 eval "echo \"$parsedLine\" >> ${outputFile}"
             done
         done
+        shopt -s extglob  # to enable extglob
+        cp /opt/${artifactId}/conf.orig/!\(*.properties\) /opt/${artifactId}/conf/
+        shopt -u extglob
     fi
 fi
 
